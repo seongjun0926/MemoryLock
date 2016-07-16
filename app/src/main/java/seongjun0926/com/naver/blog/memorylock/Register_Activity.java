@@ -33,11 +33,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity {
+public class Register_Activity extends AppCompatActivity {
 
     TextView Email_Check_TV; //이메일 중복 체크를 위한 TextView
     EditText Name_ET, Email_ET, PW_ET, PW_Check_ET; // 별명, 이메일, 암호, 암호체크 입력 받는 EditText
-    Button Login_Btn, Register_Btn, Email_Check_Btn; // 로그인 버튼, 회원 가입버튼, Email 중복 체크 버튼
+    Button Register_Btn, Email_Check_Btn; // 로그인 버튼, 회원 가입버튼, Email 중복 체크 버튼
     CheckBox Agree_Check; //정보 제공 동의 체크 버튼
 
     int Email_Check_Num = 0; //Email 중복 여부를 확인 하기위한 변수
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.register_activity);
 
 
         Log.i("test", "회원가입 실행");
@@ -60,18 +60,12 @@ public class MainActivity extends AppCompatActivity {
         Email_Check_TV = (TextView) findViewById(R.id.Email_Check_TV);
 
         Email_Check_Btn = (Button) findViewById(R.id.Email_Check_Btn);
-        Login_Btn = (Button) findViewById(R.id.Login_Btn);
         Register_Btn = (Button) findViewById(R.id.Register_Btn);
 
         Agree_Check = (CheckBox) findViewById(R.id.Agree_Check);
 
 
-        Login_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
 
 
         Email_Check_Btn.setOnClickListener(new View.OnClickListener() {
