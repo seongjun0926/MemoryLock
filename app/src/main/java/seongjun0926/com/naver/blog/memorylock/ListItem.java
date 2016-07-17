@@ -14,10 +14,11 @@ public class ListItem {
         mData = data;
     }
 
-    public ListItem(String Check){
+    public ListItem(String Check,String Question){
 
-        mData = new String[1];
+        mData = new String[2];
         mData[0] = Check;
+        mData[1] = Question;
 
 
     }

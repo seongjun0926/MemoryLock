@@ -34,15 +34,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="가입"
-                android:id="@+id/textView"
+                android:id="@+id/textView9"
                 android:layout_gravity="center_horizontal" />
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:id="@+id/Name_ET"
-                android:hint="별명" />
+                android:hint="별명"
+                android:inputType="text" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -51,10 +53,11 @@
 
                 <EditText
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="50dp"
                     android:id="@+id/Email_ET"
                     android:layout_weight="0.82"
-                    android:hint="이메일" />
+                    android:hint="이메일"
+                    android:inputType="textEmailAddress" />
 
                 <Button
                     style="?android:attr/buttonStyleSmall"
@@ -67,7 +70,7 @@
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:inputType="textPassword"
                 android:ems="10"
                 android:id="@+id/PW_ET"
@@ -75,13 +78,29 @@
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:inputType="textPassword"
+                android:ems="10"
                 android:id="@+id/PW_Check_ET"
                 android:hint="PW 확인" />
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/PW_Question"
+                android:hint="암호 찾기 질문"
+                android:inputType="text" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/PW_Answer"
+                android:hint="질문 답"
+                android:inputType="text" />
+
             <CheckBox
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="정보 제공 동의"
                 android:id="@+id/Agree_Check"
                 android:layout_gravity="center_horizontal"

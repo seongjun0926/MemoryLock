@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 public class Register_Activity extends AppCompatActivity {
 
     TextView Email_Check_TV; //이메일 중복 체크를 위한 TextView
-    EditText Name_ET, Email_ET, PW_ET, PW_Check_ET; // 별명, 이메일, 암호, 암호체크 입력 받는 EditText
+    EditText Name_ET, Email_ET, PW_ET, PW_Check_ET,PW_Question_ET,PW_Answer_ET; // 별명, 이메일, 암호, 암호체크 입력 받는 EditText
     Button Register_Btn, Email_Check_Btn; // 로그인 버튼, 회원 가입버튼, Email 중복 체크 버튼
     CheckBox Agree_Check; //정보 제공 동의 체크 버튼
 
@@ -56,8 +56,8 @@ public class Register_Activity extends AppCompatActivity {
         Email_ET = (EditText) findViewById(R.id.Email_ET);
         PW_ET = (EditText) findViewById(R.id.PW_ET);
         PW_Check_ET = (EditText) findViewById(R.id.PW_Check_ET);
-
-        Email_Check_TV = (TextView) findViewById(R.id.Email_Check_TV);
+        PW_Question_ET=(EditText)findViewById(R.id.PW_Question);
+        PW_Answer_ET=(EditText)findViewById(R.id.PW_Answer);
 
         Email_Check_Btn = (Button) findViewById(R.id.Email_Check_Btn);
         Register_Btn = (Button) findViewById(R.id.Register_Btn);
@@ -105,12 +105,14 @@ public class Register_Activity extends AppCompatActivity {
                 //회원가입 버튼 누름
                 int Name_ET_Length = Name_ET.getText().length();
                 int Email_ET_Length = Email_ET.getText().length();
+                int PW_Question_Length=PW_Question_ET.getText().length();
+                int PW_Answer_Length=PW_Answer_ET.getText().length();
 
                 if (Email_Check_Num == 0) {//이메일 중복인지 아닌지
                     Toast.makeText(getApplicationContext(), "E_Mail을 확인해주세요", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    if (Name_ET_Length == 0 || Email_ET_Length == 0) {//다른 칸들을 다 채웠는지 안채웠는지
+                    if (Name_ET_Length == 0 || Email_ET_Length == 0 || PW_Question_Length==0 || PW_Answer_Length==0) {//다른 칸들을 다 채웠는지 안채웠는지
                         Toast.makeText(getApplicationContext(), "빈칸을 채워주세요", Toast.LENGTH_SHORT).show();
                     } else {
                         if (Agree_Check.isChecked() == false) {
@@ -122,6 +124,12 @@ public class Register_Activity extends AppCompatActivity {
                                 //암호가 일치 한다면 DB연동
                                 task = new WriteJSP();
                                 task.execute();
+
+                                Toast.makeText(getApplicationContext(),"회원 가입이 완료되었습니다. 로그인을 해주세요.",Toast.LENGTH_SHORT).show();
+                                finish();
+
+                                //회원가입이 완료됨을 알려주고 현재 액티비티 종료
+
                             } else {
                                 //일치하지 않으면 Toast 띄어줌
                                 Toast.makeText(getApplicationContext(), "암호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
@@ -201,10 +209,10 @@ public class Register_Activity extends AppCompatActivity {
                     Log.i("test", "Check=" + Check);
 
                     if (Check.equals("succed")) {
-                        Email_Check_TV.setText("사용할 수 있는 E-mail 입니다.");
+                        Toast.makeText(getApplicationContext(),"사용할 수 있는 E-mail 입니다",Toast.LENGTH_SHORT).show();
                         Email_Check_Num = 1;
                     } else {
-                        Email_Check_TV.setText("사용할 수 없는 E-mail 입니다.");
+                        Toast.makeText(getApplicationContext(),"사용할 수 없는 E-mail 입니다",Toast.LENGTH_SHORT).show();
                         Email_Check_Num = 0;
                     }
                 }
@@ -223,6 +231,8 @@ public class Register_Activity extends AppCompatActivity {
         String Name = Name_ET.getText().toString();
         String Email = Email_ET.getText().toString();
         String PW = PW_ET.getText().toString();
+        String PW_Answer=PW_Answer_ET.getText().toString();
+        String PW_Question=PW_Question_ET.getText().toString();
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -232,6 +242,8 @@ public class Register_Activity extends AppCompatActivity {
                 Log.i("test","Name= "+Name);
                 Log.i("test","Email= "+Email);
                 Log.i("test","PW= "+PW);
+                Log.i("test","PW_Question= "+PW_Question);
+                Log.i("test","PW_Answer= "+PW_Answer);
 
                 HttpClient client = new DefaultHttpClient();
 
@@ -243,6 +255,8 @@ public class Register_Activity extends AppCompatActivity {
                 params.add(new BasicNameValuePair("Name", Name));
                 params.add(new BasicNameValuePair("Email", Email));
                 params.add(new BasicNameValuePair("PW", PW));
+                params.add(new BasicNameValuePair("PW_Question", PW_Question));
+                params.add(new BasicNameValuePair("PW_Answer", PW_Answer));
 
                 UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params, HTTP.UTF_8);
                 post.setEntity(ent);
