@@ -10,9 +10,48 @@
     tools:context="seongjun0926.com.naver.blog.memorylock.Main_Activity">
 
 
-    <RelativeLayout
-        android:id="@+id/map_view"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
+        <RelativeLayout
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="440dp"
+            />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="자물쇠"
+                android:id="@+id/Lock_Btn"
+                android:layout_weight="0.35" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="타임캡슐"
+                android:id="@+id/TimeCapSule_Btn"
+                android:layout_weight="0.35" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="공유"
+                android:id="@+id/Shared_Btn"
+                android:layout_weight="0.35" />
+        </LinearLayout>
+
+
+    </LinearLayout>
 </RelativeLayout>
