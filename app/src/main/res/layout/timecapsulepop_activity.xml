@@ -31,7 +31,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="자물쇠 생성"
+            android:text="타임 캡슐 생성"
             android:id="@+id/Create_TimeCapsule_Btn"
             android:layout_weight="0.5" />
     </LinearLayout>
