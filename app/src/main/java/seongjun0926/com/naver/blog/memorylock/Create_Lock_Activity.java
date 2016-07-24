@@ -60,7 +60,7 @@ public class Create_Lock_Activity extends FragmentActivity {
     Bitmap image;
     Uri selectedImage;
 
-    // WriteJSP task;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +138,7 @@ public class Create_Lock_Activity extends FragmentActivity {
         String locationProvider = LocationManager.GPS_PROVIDER;
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
         if (lastKnownLocation != null) {
-            lng = lastKnownLocation.getLatitude();
+            lng = lastKnownLocation.getLongitude();
             lat = lastKnownLocation.getLatitude();
             Log.i("test", "2_longtitude=" + lng + ", 2_latitude=" + lat);
 

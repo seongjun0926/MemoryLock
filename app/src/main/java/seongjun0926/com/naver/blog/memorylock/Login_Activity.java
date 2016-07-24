@@ -27,10 +27,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class Login_Activity extends AppCompatActivity {
+public class Login_Activity extends AppCompatActivity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener {
 
-   EditText Input_Email,Input_PW;
-    Button Register_Btn,Forget_PW,Login_Btn;
+    EditText Input_Email, Input_PW;
+    Button Register_Btn, Forget_PW, Login_Btn;
     Compare_Info D_task;//디비 값 비교 하기위한 코드
 
     CheckBox Auto_Login;//자동 로그인을 위한 체크박스
@@ -44,7 +44,6 @@ public class Login_Activity extends AppCompatActivity {
         public void onPermissionGranted() {
             Toast.makeText(Login_Activity.this, "권한 허용", Toast.LENGTH_SHORT).show();
         }
-
         @Override
         public void onPermissionDenied(ArrayList<String> deniedPermissions) {
             Toast.makeText(Login_Activity.this, "권한 거부\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
@@ -52,8 +51,6 @@ public class Login_Activity extends AppCompatActivity {
 
 
     };
-
-
 
 
     @Override
@@ -69,22 +66,24 @@ public class Login_Activity extends AppCompatActivity {
 
         Log.i("test", "로그인 실행");
 
-        Input_Email=(EditText)findViewById(R.id.Input_Email);
-        Input_PW=(EditText)findViewById(R.id.Input_PW);
+        Input_Email = (EditText) findViewById(R.id.Input_Email);
+        Input_PW = (EditText) findViewById(R.id.Input_PW);
         //에딧텍스트 초기화
 
-        Register_Btn=(Button)findViewById(R.id.Register_Btn);
-        Forget_PW=(Button)findViewById(R.id.Forget_PW);
-        Login_Btn=(Button)findViewById(R.id.Login_Btn);
-        //버튼 초기화
-
-        Auto_Login=(CheckBox)findViewById(R.id.Auto_Login);
+        Register_Btn = (Button) findViewById(R.id.Register_Btn);
+        Forget_PW = (Button) findViewById(R.id.Forget_PW);
+        Login_Btn = (Button) findViewById(R.id.Login_Btn);
+        Auto_Login = (CheckBox) findViewById(R.id.Auto_Login);
+        Auto_Login.setOnCheckedChangeListener(this);
+        Forget_PW.setOnClickListener(this);
+        Login_Btn.setOnClickListener(this);
+        Register_Btn.setOnClickListener(this);
         //체크박스 초기화
 
         setting = getSharedPreferences("setting", 0);
-        editor= setting.edit();
+        editor = setting.edit();
 
-        if(setting.getBoolean("Auto_Login_enabled", false)){
+        if (setting.getBoolean("Auto_Login_enabled", false)) {
             Input_Email.setText(setting.getString("ID", ""));
             Input_PW.setText(setting.getString("PW", ""));
             Auto_Login.setChecked(true);
@@ -99,24 +98,50 @@ public class Login_Activity extends AppCompatActivity {
             마지막으로 자동로그인이 활성화 되었으므로 CheckBox도 활성화 표시를 해줍니다*/
         }
 
-        Auto_Login.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                // TODO Auto-generated method stub
-                if(isChecked){
-                    String ID = Input_Email.getText().toString();
-                    String PW = Input_PW.getText().toString();
+    }
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.Forget_PW:
+                Intent Forget_PW_Activity = new Intent(Login_Activity.this, Forget_PW_Activity.class);
+                startActivity(Forget_PW_Activity);
+                break;
+            case R.id.Login_Btn:
+                String Text_Email = Input_Email.getText().toString();
+                String Text_PW = Input_PW.getText().toString();
+                //이메일과 암호를 가져오기 위한 스트링 객체 선언
 
-                    editor.putString("ID", ID);
-                    editor.putString("PW", PW);
-                    editor.putBoolean("Auto_Login_enabled", true);
-                    editor.commit();
-                }else{
-//			editor.remove("ID");
-//			editor.remove("PW");
-//			editor.remove("Auto_Login_enabled");
-                    editor.clear();
-                    editor.commit();
+                Log.i("test", "Text_Email= " + Text_Email + ", Text_PW= " + Text_PW);
+                //이메일 형식이 맞을때
+                if (Text_Email.length() != 0 || Text_PW.length() != 0) {
+                    D_task = new Compare_Info();
+                    D_task.execute("http://seongjun0926.cafe24.com/MemoryLock/Compare_Info.jsp?E_Mail=" + Text_Email + "&PW=" + Text_PW); //주소에 get 방식으로 전송
+                } else {
+                    Toast.makeText(getApplicationContext(), "이메일 또는 암호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.Register_Btn:
+                Intent Register_Activity = new Intent(Login_Activity.this, Register_Activity.class);
+                startActivity(Register_Activity);
+                break;
+        }
+    }
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        if (isChecked) {
+            String ID = Input_Email.getText().toString();
+            String PW = Input_PW.getText().toString();
+
+            editor.putString("ID", ID);
+            editor.putString("PW", PW);
+            editor.putBoolean("Auto_Login_enabled", true);
+            editor.commit();
+        } else {
+//         editor.remove("ID");
+//         editor.remove("PW");
+//         editor.remove("Auto_Login_enabled");
+            editor.clear();
+            editor.commit();
 /*
                     처음 세줄은 주석처리 되어 있습니다 그 이유는 모든 설정을 파괴할 것이니 일일히 써넣지 말고 한번에 지워버리는것이 코드 절약에도 좋습니다
 
@@ -127,59 +152,8 @@ public class Login_Activity extends AppCompatActivity {
 
 */
 
-                }
-            }
-        });
-
-
-
-        Forget_PW.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent Register_Activity = new Intent(Login_Activity.this, Forget_PW_Activity.class);
-                startActivity(Register_Activity);
-            }
-        });
-
-
-        Login_Btn.setOnClickListener(new View.OnClickListener() {
-            //로그인 버튼 클릭리스너
-            @Override
-            public void onClick(View view) {
-                String Text_Email=Input_Email.getText().toString();
-                String Text_PW=Input_PW.getText().toString();
-                //이메일과 암호를 가져오기 위한 스트링 객체 선언
-
-                Log.i("test","Text_Email= "+Text_Email+", Text_PW= "+Text_PW);
-                //이메일 형식이 맞을때
-                if(Text_Email.length()!=0||Text_PW.length()!=0) {
-                    D_task = new Compare_Info();
-                    D_task.execute("http://seongjun0926.cafe24.com/MemoryLock/Compare_Info.jsp?E_Mail=" + Text_Email+"&PW="+Text_PW); //주소에 get 방식으로 전송
-                }else{
-                    Toast.makeText(getApplicationContext(),"이메일 또는 암호를 입력해주세요.",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });//
-
-
-        Register_Btn.setOnClickListener(new View.OnClickListener() {
-            //회원 가입 버튼 클릭 리스너
-            @Override
-            public void onClick(View view) {
-                Intent Register_Activity = new Intent(Login_Activity.this, Register_Activity.class);
-                startActivity(Register_Activity);
-            }
-        });
-
-
+        }
     }
-
-
-
-
-
-
-
 
     private class Compare_Info extends AsyncTask<String, Integer, String> {
 
