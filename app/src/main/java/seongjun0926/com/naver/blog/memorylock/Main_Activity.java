@@ -2,7 +2,6 @@ package seongjun0926.com.naver.blog.memorylock;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,13 +19,13 @@ import net.daum.mf.map.api.MapView;
 public class Main_Activity extends FragmentActivity implements MapView.POIItemEventListener {
 
     Button Lock_Btn, TimeCapsule_Btn, Shared_Btn;
-    CountDownTimer CountDown=null;
+
     MapView mapView=null;
-    MapPOIItem mCustomMarker;
+    MapPOIItem mCustomMarker,mCustomMarker2;
 
 
-    private static final MapPoint CUSTOM_MARKER_POINT = MapPoint.mapPointWithGeoCoord(35.871922,128.623690);//커스텀 마크 설정하기.
 
+    private static final MapPoint[] CUSTOM_MARKER_POINT ={ MapPoint.mapPointWithGeoCoord(35.871922,128.623690),MapPoint.mapPointWithGeoCoord(35.871022,128.624690),MapPoint.mapPointWithGeoCoord(35.871122,128.625690),MapPoint.mapPointWithGeoCoord(35.871222,128.626690)};//커스텀 마크 설정하기.
 
 
     class CustomCalloutBalloonAdapter implements CalloutBalloonAdapter {
@@ -95,7 +94,7 @@ public class Main_Activity extends FragmentActivity implements MapView.POIItemEv
 
         //맵뷰
         mapView = new MapView(this);
-        mapView.setDaumMapApiKey("14f0409b73f10d9a817b7968ca7c9a19");
+        mapView.setDaumMapApiKey(MapAPI.MAP_API_KEY_Value);
         mapView.setMapType(MapView.MapType.Standard); // 맵 타입을 표준 타입으로 변경
         mapView.setShowCurrentLocationMarker(true);//현재 위치 보여주는 마커 사용
 
@@ -106,6 +105,8 @@ public class Main_Activity extends FragmentActivity implements MapView.POIItemEv
         mapView.setCalloutBalloonAdapter(new CustomCalloutBalloonAdapter());
         // 구현한 CalloutBalloonAdapter 등록
         createCustomMarker(mapView);
+
+
         //커스텀 마커 생성
 
         RelativeLayout container = (RelativeLayout) findViewById(R.id.map_view);
@@ -128,21 +129,37 @@ public class Main_Activity extends FragmentActivity implements MapView.POIItemEv
     }
 
     private void createCustomMarker(MapView mapView) {
+
         mCustomMarker = new MapPOIItem();
         String name = "Custom Marker";//마커 이름 지정
         mCustomMarker.setItemName(name);
         mCustomMarker.setTag(1);//Item 객체에 임의의 정수값(tag)을 지정할 수 있다. 식별자 Id
-        mCustomMarker.setMapPoint(CUSTOM_MARKER_POINT);// Item의 지도상 좌표를 설정한다.
+        mCustomMarker.setMapPoint(CUSTOM_MARKER_POINT[0]);// Item의 지도상 좌표를 설정한다.
 
         mCustomMarker.setMarkerType(MapPOIItem.MarkerType.CustomImage);//Item 아이콘(마커) 타입을 설정한다.
 
+        mCustomMarker2=new MapPOIItem();
+        mCustomMarker2.setItemName("hi");
+        mCustomMarker2.setTag(2);//Item 객체에 임의의 정수값(tag)을 지정할 수 있다. 식별자 Id
+        mCustomMarker2.setMapPoint(CUSTOM_MARKER_POINT[1]);// Item의 지도상 좌표를 설정한다.
+
+        String a="R.drawable.custom_marker_red";
+
+
         mCustomMarker.setCustomImageResourceId(R.drawable.custom_marker_red);//사용자 지정 마커 ex)자물쇠, 타임캡슐
+        mCustomMarker2.setCustomImageResourceId(R.drawable.custom_marker_red);//사용자 지정 마커 ex)자물쇠, 타임캡슐
         mCustomMarker.setCustomImageAutoscale(false);
         mCustomMarker.setCustomImageAnchor(0.5f, 1.0f);
 
+        mCustomMarker2.setCustomImageAutoscale(false);
+        mCustomMarker2.setCustomImageAnchor(0.5f, 1.0f);
+
         mapView.addPOIItem(mCustomMarker);//지도화면에 POI Item 아이콘(마커)를 추가한다.
+        mapView.addPOIItem(mCustomMarker2);//지도화면에 POI Item 아이콘(마커)를 추가한다.
+
         mapView.selectPOIItem(mCustomMarker, true);//특정 POI Item 을 선택한다.
-        mapView.setMapCenterPoint(CUSTOM_MARKER_POINT, false);//지도 화면의 중심점을 설정한다.
+
+       // mapView.setMapCenterPoint(CUSTOM_MARKER_POINT, false);//지도 화면의 중심점을 설정한다.
 
     }
 
