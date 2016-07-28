@@ -1,4 +1,4 @@
-package seongjun0926.com.naver.blog.memorylock;
+package seongjun0926.com.naver.blog.memorylock.First;
 
 import android.Manifest;
 import android.content.Intent;
@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+
+import seongjun0926.com.naver.blog.memorylock.R;
 
 public class Login_Activity extends AppCompatActivity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener {
 
@@ -213,7 +215,7 @@ public class Login_Activity extends AppCompatActivity implements View.OnClickLis
 
                     if (Check.equals("succed")) {
                         //ID와 PW가 일치하면 MainActivity 실행
-                        Intent Main_Activity = new Intent(Login_Activity.this, Main_Activity.class);
+                        Intent Main_Activity = new Intent(Login_Activity.this, seongjun0926.com.naver.blog.memorylock.Main_Activity.class);
                         startActivity(Main_Activity);
                         finish();
                     } else {

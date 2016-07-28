@@ -1,4 +1,4 @@
-package seongjun0926.com.naver.blog.memorylock;
+package seongjun0926.com.naver.blog.memorylock.First;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +32,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+import seongjun0926.com.naver.blog.memorylock.R;
 
 public class Register_Activity extends AppCompatActivity {
 

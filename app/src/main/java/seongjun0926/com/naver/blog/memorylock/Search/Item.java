@@ -1,4 +1,4 @@
-package seongjun0926.com.naver.blog.memorylock;
+package seongjun0926.com.naver.blog.memorylock.Search;
 
 /**
  * Created by juny on 2016-07-24.

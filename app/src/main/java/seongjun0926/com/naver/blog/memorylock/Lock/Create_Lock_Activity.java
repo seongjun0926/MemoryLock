@@ -1,4 +1,4 @@
-package seongjun0926.com.naver.blog.memorylock;
+package seongjun0926.com.naver.blog.memorylock.Lock;
 
 import android.Manifest;
 import android.content.Context;
@@ -39,6 +39,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.regex.Pattern;
+
+import seongjun0926.com.naver.blog.memorylock.R;
+
 public class Create_Lock_Activity extends FragmentActivity {
     private static final int RESULT_LOAD_IMAGE = 1;
 
@@ -57,8 +60,7 @@ public class Create_Lock_Activity extends FragmentActivity {
     Finde_Share_Email FSE_task;
     String absolutePath;
     ImageView imageToUpload;
-    Bitmap image;
-    Uri selectedImage;
+
 
 
     @Override
@@ -138,6 +140,9 @@ public class Create_Lock_Activity extends FragmentActivity {
         String locationProvider = LocationManager.GPS_PROVIDER;
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
         if (lastKnownLocation != null) {
+
+            //main 의 onMapViewInitialized에  mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading); 가 선언되어있어야 가능함
+
             lng = lastKnownLocation.getLongitude();
             lat = lastKnownLocation.getLatitude();
             Log.i("test", "2_longtitude=" + lng + ", 2_latitude=" + lat);
@@ -386,6 +391,11 @@ public class Create_Lock_Activity extends FragmentActivity {
             Log.i("test", "result = " + s);
 
             dos.close();
+
+            Toast.makeText(getApplicationContext(),"등록이 완료되었습니다.",Toast.LENGTH_SHORT).show();
+            Intent Main_Activity = new Intent(Create_Lock_Activity.this, seongjun0926.com.naver.blog.memorylock.Main_Activity.class);
+            startActivity(Main_Activity);
+            finish();
 
         } catch (Exception e) {
 

@@ -1,9 +1,11 @@
-package seongjun0926.com.naver.blog.memorylock;
+package seongjun0926.com.naver.blog.memorylock.TimeCapsule;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Window;
+
+import seongjun0926.com.naver.blog.memorylock.R;
 
 public class TimeCapsulePop_Activity extends FragmentActivity {
 

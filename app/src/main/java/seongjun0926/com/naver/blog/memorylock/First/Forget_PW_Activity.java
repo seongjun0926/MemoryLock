@@ -1,4 +1,4 @@
-package seongjun0926.com.naver.blog.memorylock;
+package seongjun0926.com.naver.blog.memorylock.First;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -35,6 +35,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+import seongjun0926.com.naver.blog.memorylock.ListItem;
+import seongjun0926.com.naver.blog.memorylock.R;
 
 public class Forget_PW_Activity extends AppCompatActivity {
     EditText Input_Email_ET, Input_Answer_ET, Input_Change_PW_ET;
