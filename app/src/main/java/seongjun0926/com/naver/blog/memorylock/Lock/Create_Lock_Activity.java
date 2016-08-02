@@ -1,6 +1,7 @@
 package seongjun0926.com.naver.blog.memorylock.Lock;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -50,7 +51,7 @@ public class Create_Lock_Activity extends FragmentActivity {
     double lng;
     double lat;
     int M_C_Type=1;
-    String Location, M_C_Creator, Search_Email, M_S_Pesrsons, M_C_Text;//위치 저장할 변수
+    String Location, M_C_Creator, Search_Email, M_S_Persons, M_C_Text;//위치 저장할 변수
     SharedPreferences setting;
     String urlString;
 
@@ -61,7 +62,9 @@ public class Create_Lock_Activity extends FragmentActivity {
     String absolutePath;
     ImageView imageToUpload;
 
+    ProgressDialog dialog ;
 
+    int Share_Email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,9 +148,7 @@ public class Create_Lock_Activity extends FragmentActivity {
 
             lng = lastKnownLocation.getLongitude();
             lat = lastKnownLocation.getLatitude();
-            Log.i("test", "2_longtitude=" + lng + ", 2_latitude=" + lat);
 
-            Log.i("test","Location : "+Location);
         }
 //------------------------------------------------------------------------------------------------------------------------------//
         Search_Email_ET = (EditText) findViewById(R.id.Search_Email);
@@ -167,6 +168,8 @@ public class Create_Lock_Activity extends FragmentActivity {
                         FSE_task = new Finde_Share_Email();
                         FSE_task.execute("http://seongjun0926.cafe24.com/MemoryLock/Forget_Email.jsp?E_Mail=" + Search_Email);
 
+                    }else{
+                        Toast.makeText(getApplicationContext(),"이메일 양식을 확인해주세요.",Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "추억을 공유할 사용자를 입력해주세요,", Toast.LENGTH_SHORT).show();
@@ -178,24 +181,26 @@ public class Create_Lock_Activity extends FragmentActivity {
         Register_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(Search_Email_ET.getText().toString().length()>=1 && Share_Email==0){
+                    Toast.makeText(getApplicationContext(),"공유 사용자란을 확인해주세요.",Toast.LENGTH_SHORT).show();
+                }else {
+                    M_C_Text = M_C_Text_ET.getText().toString();
+                    String M_C_Text_enco = null;
+                    if (M_C_Text_ET.length() != 0) {
+                        try {
+                            M_C_Text_enco = java.net.URLEncoder.encode(new String(M_C_Text.getBytes("UTF-8")));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        urlString = "http://seongjun0926.cafe24.com/MemoryLock/Register_Create.jsp?lat=" + lat + "&lng=" + lng + "&M_C_Creator=" + M_C_Creator + "&M_C_Text=" + M_C_Text_enco + "&M_C_Type=" + M_C_Type + "&M_S_Persons=" + M_S_Persons;
+                        Log.i("test", "lat =" + lat + ", lng=" + lng + ", M_C_Creator : " + M_C_Creator + ", M_C_Text : " + M_C_Text + ", M_C_Type : " + M_C_Type + ", M_S_Persons : " + M_S_Persons);
+                        Log.i("test", urlString);
+                        DoFileUpload(urlString, absolutePath);
 
-                M_C_Text = M_C_Text_ET.getText().toString();
-                String M_C_Text_enco = null;
-                if (M_C_Text_ET.length() != 0) {
-                    try {
-                         M_C_Text_enco=java.net.URLEncoder.encode(new String(M_C_Text.getBytes("UTF-8")));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "내용을 입력해주세요", Toast.LENGTH_SHORT).show();
                     }
-                    urlString = "http://seongjun0926.cafe24.com/MemoryLock/Register_Create.jsp?lat="+lat+"&lng="+lng+"&M_C_Creator="+M_C_Creator+"&M_C_Text="+M_C_Text_enco+"&M_C_Type="+M_C_Type+"&M_S_Pesrsons="+M_S_Pesrsons;
-                    Log.i("test", "lat ="+lat+", lng="+lng+", M_C_Creator : "+M_C_Creator+", M_C_Text : "+M_C_Text+", M_C_Type : "+M_C_Type+", M_S_Pesrsons : "+M_S_Pesrsons);
-                    Log.i("test",urlString);
-                    DoFileUpload(urlString, absolutePath);
-
-                } else {
-                    Toast.makeText(getApplicationContext(), "내용을 입력해주세요", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
@@ -265,12 +270,13 @@ public class Create_Lock_Activity extends FragmentActivity {
                     Check = jo.getString("Check");//Json에서 Check라는 키의 값을 가져옴
 
                     if (Check.equals("succed")) {
-                        M_S_Pesrsons = Search_Email;
+                        M_S_Persons = Search_Email;
                         Toast.makeText(getApplicationContext(), "공유 사용자가 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                        Share_Email=1;
                         Search_Email_Btn.setClickable(false);
 
                     } else {
-                        M_S_Pesrsons = null;
+                        M_S_Persons = null;
                         Toast.makeText(getApplicationContext(), "일치하는 E-Mail이 없습니다.", Toast.LENGTH_SHORT).show();
 
                     }
@@ -313,15 +319,16 @@ public class Create_Lock_Activity extends FragmentActivity {
             }
 
 
+        }else{
+            Toast.makeText(getApplicationContext(),"사진을 선택해주세요!!",Toast.LENGTH_SHORT).show();
         }
     }
 
 
 
     public void DoFileUpload(String apiUrl, String absolutePath) {
-        Log.i("test","DoFileUpload");
-        Log.i("test","apiUrl : "+apiUrl);
-        Log.i("test","absolutePath : "+absolutePath);
+
+
         HttpFileUpload(apiUrl, "",absolutePath);
 
 
@@ -333,6 +340,7 @@ public class Create_Lock_Activity extends FragmentActivity {
 
     public void HttpFileUpload(String urlString, String params, String fileName) {
         try {
+
             FileInputStream mFileInputStream = new FileInputStream(fileName);
             Log.i("test", "mFileInputStream  is " + mFileInputStream);
 
@@ -362,7 +370,6 @@ public class Create_Lock_Activity extends FragmentActivity {
             byte[] buffer = new byte[bufferSize];
             int bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
 
-            Log.i("test", "image byte is " + bytesRead);
 
             // read image
             while (bytesRead > 0) {
@@ -376,7 +383,6 @@ public class Create_Lock_Activity extends FragmentActivity {
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
             // close streams
-            Log.i("test" , "File is written");
             mFileInputStream.close();
             dos.flush(); // finish upload...   
 
@@ -388,10 +394,7 @@ public class Create_Lock_Activity extends FragmentActivity {
                 b.append( (char)ch );
             }
             String s=b.toString();
-            Log.i("test", "result = " + s);
-
             dos.close();
-
             Toast.makeText(getApplicationContext(),"등록이 완료되었습니다.",Toast.LENGTH_SHORT).show();
             Intent Main_Activity = new Intent(Create_Lock_Activity.this, seongjun0926.com.naver.blog.memorylock.Main_Activity.class);
             startActivity(Main_Activity);
@@ -399,6 +402,8 @@ public class Create_Lock_Activity extends FragmentActivity {
 
         } catch (Exception e) {
 
+
+            Toast.makeText(getApplicationContext(),"사진을 선택해주세요!!",Toast.LENGTH_SHORT).show();
             Log.i("test", "exception " + e.getMessage());
             // TODO: handle exception
         }

@@ -1,4 +1,4 @@
-package seongjun0926.com.naver.blog.memorylock;
+package seongjun0926.com.naver.blog.memorylock.List;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import seongjun0926.com.naver.blog.memorylock.R;
 
 /**
  * Created by juny on 2016-07-27.

@@ -32,28 +32,23 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:weightSum="1">
+            android:weightSum="1"
+            android:layout_gravity="center_horizontal">
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="자물쇠"
                 android:id="@+id/Lock_Btn"
-                android:layout_weight="0.35" />
+                android:layout_weight="0.5" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="타임캡슐"
                 android:id="@+id/TimeCapSule_Btn"
-                android:layout_weight="0.35" />
+                android:layout_weight="0.5" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="공유"
-                android:id="@+id/Shared_Btn"
-                android:layout_weight="0.35" />
         </LinearLayout>
 
 

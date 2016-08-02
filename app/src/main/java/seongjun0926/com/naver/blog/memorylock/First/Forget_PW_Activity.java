@@ -8,6 +8,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -36,7 +37,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import seongjun0926.com.naver.blog.memorylock.ListItem;
 import seongjun0926.com.naver.blog.memorylock.R;
 
 public class Forget_PW_Activity extends AppCompatActivity {
@@ -52,13 +52,12 @@ public class Forget_PW_Activity extends AppCompatActivity {
     Change_PW CP_task;
 
 
-    ArrayList<ListItem> listitem = new ArrayList<ListItem>();
-    ListItem Item;
     //ListItem객체는 JSON형식으로 데이터를 셋팅하기 위한 클래스
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.forget_pw_activity);
 
         Input_Email_ET = (EditText) findViewById(R.id.Input_Email);

@@ -1,4 +1,4 @@
-package seongjun0926.com.naver.blog.memorylock;
+package seongjun0926.com.naver.blog.memorylock.List;
 
 import android.graphics.drawable.Drawable;
 
@@ -21,7 +21,6 @@ public class ListViewItem {
     public void setTime_str(String time_str){
         Time_str=time_str;
     }
-
     public Drawable getImage(){
         return this.Image;
     }

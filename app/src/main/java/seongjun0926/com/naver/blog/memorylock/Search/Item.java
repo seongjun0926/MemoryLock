@@ -10,4 +10,5 @@ public class Item {
     public String Contents_text;
     public String Contents_image;
     public String type;
+    public String num;
 }

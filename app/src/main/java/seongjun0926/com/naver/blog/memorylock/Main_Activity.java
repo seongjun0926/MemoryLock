@@ -34,7 +34,7 @@ import seongjun0926.com.naver.blog.memorylock.Search.Searcher;
 public class Main_Activity extends FragmentActivity implements MapView.MapViewEventListener,MapView.POIItemEventListener,View.OnClickListener {
 
     String E_mail;
-    Button Lock_Btn, TimeCapSule_Btn, Shared_Btn;
+    Button Lock_Btn, TimeCapSule_Btn;
     private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
     SharedPreferences setting;
     MapView mapView=null;
@@ -54,8 +54,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
         Lock_Btn.setOnClickListener(this);
         TimeCapSule_Btn = (Button) findViewById(R.id.TimeCapSule_Btn);
         TimeCapSule_Btn.setOnClickListener(this);
-        Shared_Btn = (Button) findViewById(R.id.Shared_Btn);
-        Shared_Btn.setOnClickListener(this);
+
 
 
         //=========================================================================================================//
@@ -93,9 +92,6 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
      @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.Shared_Btn:
-
-            break;
             case R.id.Lock_Btn:
                 Intent LockPop_Activity = new Intent(Main_Activity.this, seongjun0926.com.naver.blog.memorylock.Lock.LockPop_Activity.class);
 

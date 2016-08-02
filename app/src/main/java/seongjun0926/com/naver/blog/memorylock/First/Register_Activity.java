@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -37,7 +37,6 @@ import seongjun0926.com.naver.blog.memorylock.R;
 
 public class Register_Activity extends AppCompatActivity {
 
-    TextView Email_Check_TV; //이메일 중복 체크를 위한 TextView
     EditText Name_ET, Email_ET, PW_ET, PW_Check_ET,PW_Question_ET,PW_Answer_ET; // 별명, 이메일, 암호, 암호체크 입력 받는 EditText
     Button Register_Btn, Email_Check_Btn; // 로그인 버튼, 회원 가입버튼, Email 중복 체크 버튼
     CheckBox Agree_Check; //정보 제공 동의 체크 버튼
@@ -49,6 +48,7 @@ public class Register_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.register_activity);
 
 

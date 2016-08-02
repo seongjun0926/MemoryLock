@@ -91,6 +91,7 @@ public class Searcher {
 
                     Item item = new Item();
                     Log.i("test", "item : " + item);
+                    item.num=object.getString("M_C_Num");
                     item.Contents_image = object.getString("M_C_Contents");
                     item.Contents_text = object.getString("M_C_Text");
                     item.lat = object.getString("M_C_lat");
@@ -98,13 +99,7 @@ public class Searcher {
                     item.time = object.getString("M_C_Time");
                     item.type = object.getString("M_C_Type");
                     itemList.add(item);
-                    Log.i("test", "item.Contents_image : " + item.Contents_image);
-                    Log.i("test", "item.Contents_text : " + item.Contents_text);
-                    Log.i("test", "item.lat : " + item.lat);
-                    Log.i("test", "item.lng : " + item.lng);
-                    Log.i("test", "item.time : " + item.time);
-                    Log.i("test", "item.type : " + item.type);
-                    Log.i("test", "itemList : " + itemList);
+
                 }
             }
         } catch (Exception e) {

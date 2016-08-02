@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -34,7 +35,8 @@ public class Login_Activity extends AppCompatActivity implements View.OnClickLis
     EditText Input_Email, Input_PW;
     Button Register_Btn, Forget_PW, Login_Btn;
     Compare_Info D_task;//디비 값 비교 하기위한 코드
-
+    String Text_Email;
+    String Text_PW;
     CheckBox Auto_Login;//자동 로그인을 위한 체크박스
 
     SharedPreferences setting;
@@ -58,6 +60,7 @@ public class Login_Activity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.login_activity);
 
         new TedPermission(this)
@@ -109,18 +112,23 @@ public class Login_Activity extends AppCompatActivity implements View.OnClickLis
                 startActivity(Forget_PW_Activity);
                 break;
             case R.id.Login_Btn:
-                String Text_Email = Input_Email.getText().toString();
-                String Text_PW = Input_PW.getText().toString();
+                 Text_Email = Input_Email.getText().toString();
+                 Text_PW = Input_PW.getText().toString();
                 //이메일과 암호를 가져오기 위한 스트링 객체 선언
 
-                Log.i("test", "Text_Email= " + Text_Email + ", Text_PW= " + Text_PW);
-                //이메일 형식이 맞을때
-                if (Text_Email.length() != 0 || Text_PW.length() != 0) {
-                    D_task = new Compare_Info();
-                    D_task.execute("http://seongjun0926.cafe24.com/MemoryLock/Compare_Info.jsp?E_Mail=" + Text_Email + "&PW=" + Text_PW); //주소에 get 방식으로 전송
-                } else {
-                    Toast.makeText(getApplicationContext(), "이메일 또는 암호를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                }
+                if(Auto_Login.isChecked()==false)
+                    Toast.makeText(getApplicationContext(),"자동 로그인 체크를 해주시면 원활한 사용이 가능합니다.",Toast.LENGTH_SHORT).show();
+
+
+
+                    //이메일 형식이 맞을때
+                    if (Text_Email.length() != 0 || Text_PW.length() != 0) {
+                        D_task = new Compare_Info();
+                        D_task.execute("http://seongjun0926.cafe24.com/MemoryLock/Compare_Info.jsp?E_Mail=" + Text_Email + "&PW=" + Text_PW); //주소에 get 방식으로 전송
+                    } else {
+                        Toast.makeText(getApplicationContext(), "이메일 또는 암호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                    }
+
                 break;
             case R.id.Register_Btn:
                 Intent Register_Activity = new Intent(Login_Activity.this, Register_Activity.class);
@@ -133,7 +141,6 @@ public class Login_Activity extends AppCompatActivity implements View.OnClickLis
         if (isChecked) {
             String ID = Input_Email.getText().toString();
             String PW = Input_PW.getText().toString();
-
             editor.putString("ID", ID);
             editor.putString("PW", PW);
             editor.putBoolean("Auto_Login_enabled", true);
@@ -215,6 +222,12 @@ public class Login_Activity extends AppCompatActivity implements View.OnClickLis
 
                     if (Check.equals("succed")) {
                         //ID와 PW가 일치하면 MainActivity 실행
+
+                        editor.putString("ID", Text_Email);
+                        editor.putString("PW", Text_PW);
+                        editor.commit();
+                        //프리퍼런스에 Email값과 PW 값을 넣어 준 후 commit을 시켜야 값이 저장되고 사용가능
+
                         Intent Main_Activity = new Intent(Login_Activity.this, seongjun0926.com.naver.blog.memorylock.Main_Activity.class);
                         startActivity(Main_Activity);
                         finish();

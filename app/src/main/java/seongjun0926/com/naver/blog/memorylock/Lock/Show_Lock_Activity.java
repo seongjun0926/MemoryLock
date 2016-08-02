@@ -1,45 +1,50 @@
 package seongjun0926.com.naver.blog.memorylock.Lock;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import java.io.IOException;
+import java.io.BufferedReader;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import seongjun0926.com.naver.blog.memorylock.ListViewAdapter;
+import seongjun0926.com.naver.blog.memorylock.List.ListViewAdapter;
 import seongjun0926.com.naver.blog.memorylock.R;
 import seongjun0926.com.naver.blog.memorylock.Search.Item;
 import seongjun0926.com.naver.blog.memorylock.Search.OnFinishSearchListener;
 import seongjun0926.com.naver.blog.memorylock.Search.Searcher;
 
-public class Show_Lock_Activity extends AppCompatActivity {
+public class Show_Lock_Activity extends AppCompatActivity{
 
-
+    Delete_Contents DC_task;
     String E_mail;
     SharedPreferences setting;
-
     ListViewAdapter adapter;
 
-    ArrayList<HashMap<String, String>> personList;
-
-
+    List<Item> itemList1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.show_lock_activity);
         Log.i("test", "Show_Lock_Activity");
 
-        ListView listview;
+        final ListView listview;
 
         // Adapter 생성
         adapter = new ListViewAdapter();
@@ -47,7 +52,39 @@ public class Show_Lock_Activity extends AppCompatActivity {
         // 리스트뷰 참조 및 Adapter달기
         listview = (ListView) findViewById(R.id.List_View);
         listview.setAdapter(adapter);
+        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+
+                Item item=itemList1.get(i);
+                final String Delete_Num=item.num;
+                //String a=(String)adapterView.getItemAtPosition(i);//null
+
+                //String a=(String)adapterView.getAdapter().getItem(i);//null
+
+                //String a=adapter.getItem(i).toString();//null
+
+                Log.i("test","a : "+Delete_Num);
+
+                AlertDialog.Builder alert=new AlertDialog.Builder(view.getContext());
+                alert.setTitle("확인");
+                alert.setMessage("삭제 하시겠습니까?");
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        DC_task = new Delete_Contents();
+                        DC_task.execute("http://cometocu.com/MemoryLock/Delete_Contents.jsp?M_C_Num="+Delete_Num);
+                    }
+                });
+                alert.show();
+
+                return false;
+            }
+        });
 
         setting = getSharedPreferences("setting", 0);
         E_mail = setting.getString("ID", "");
@@ -72,6 +109,7 @@ public class Show_Lock_Activity extends AppCompatActivity {
 
     /*여기있어야함*/
     private void showResult(List<Item> itemList) {
+        itemList1=itemList;
         Log.i("test1", "showResult()");
         Log.i("test1", "itemList size: " + itemList.size());
 
@@ -84,6 +122,7 @@ public class Show_Lock_Activity extends AppCompatActivity {
             final String Context = item.Contents_text;
             final String Time = item.time;
 
+
             creaeteDrawableFromUrl cdf = new creaeteDrawableFromUrl();
             cdf.execute(Image,Context,Time);
 
@@ -91,9 +130,11 @@ public class Show_Lock_Activity extends AppCompatActivity {
 
     }
 
+
     class creaeteDrawableFromUrl extends AsyncTask<String, Void, Drawable> {
         String text;
         String time;
+        String num;
         @Override
         protected Drawable doInBackground(String... strings) {
             String url = strings[0];
@@ -120,27 +161,54 @@ public class Show_Lock_Activity extends AppCompatActivity {
     }
 
 
-    private Drawable createDrawableFromUrl(String url) {
-        try {
-            InputStream is = (InputStream) this.fetch(url);
-            Drawable d = Drawable.createFromStream(is, "src");
+    private class Delete_Contents extends AsyncTask<String, Integer, String> {
 
-            return d;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+
+        @Override
+        protected String doInBackground(String... urls) {
+            StringBuilder jsonHtml = new StringBuilder();
+            try {
+                // 연결 url 설정
+                URL url = new URL(urls[0]);
+                // 커넥션 객체 생성
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                // 연결되었으면.
+                if (conn != null) {
+                    conn.setConnectTimeout(10000);
+                    conn.setUseCaches(false);
+                    // 연결되었음 코드가 리턴되면.
+                    if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                        for (; ; ) {
+                            // 웹상에 보여지는 텍스트를 라인단위로 읽어 저장.
+                            String line = br.readLine();
+                            if (line == null) break;
+                            // 저장된 텍스트 라인을 jsonHtml에 붙여넣음
+                            jsonHtml.append(line + "\n");
+                        }
+                        br.close();
+                    }
+                    conn.disconnect();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return jsonHtml.toString();
+
         }
-    }
 
-    private Object fetch(String address) throws MalformedURLException, IOException {
-        URL url = new URL(address);
-        Object content = url.getContent();
-        return content;
-    }
+        protected void onPostExecute(String str) {
 
+            Toast.makeText(getApplicationContext(),"삭제되었습니다.",Toast.LENGTH_SHORT).show();
+            Intent Show_Lock_Activity = new Intent(Show_Lock_Activity.this, Show_Lock_Activity.class);
+            startActivity(Show_Lock_Activity);
+            finish();
+
+
+        }
+
+
+    }
 
 }
 
