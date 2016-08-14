@@ -40,14 +40,12 @@
             android:text="찾기"
             android:id="@+id/Share_Email_Btn" />
     </LinearLayout>
-
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/M_C_Header_ET"
         android:layout_weight="0.03"
         android:hint="추억의 제목을 작성해주세요." />
-
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,6 +66,16 @@
 
 
     </ImageView>
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/datePicker"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.20"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
+        />
 
     <Button
         style="?android:attr/buttonStyleSmall"

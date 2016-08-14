@@ -1,6 +1,5 @@
-package seongjun0926.com.naver.blog.memorylock.Lock;
+package seongjun0926.com.naver.blog.memorylock.TimeCapsule;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,9 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -23,6 +20,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import seongjun0926.com.naver.blog.memorylock.List.ListViewAdapter;
@@ -31,37 +31,23 @@ import seongjun0926.com.naver.blog.memorylock.Search.Item;
 import seongjun0926.com.naver.blog.memorylock.Search.OnFinishSearchListener;
 import seongjun0926.com.naver.blog.memorylock.Search.Searcher;
 
-public class Show_Lock_Activity extends AppCompatActivity{
+public class Show_Time_Activity extends AppCompatActivity{
 
     Delete_Contents DC_task;
     String E_mail;
     SharedPreferences setting;
     ListViewAdapter adapter;
-    Create_Dialog CD;
-    List<Item> itemList1;
 
-    Dialog dialog;
-    TextView SD_HeaderTV,SD_ContentsTV,SD_TimeTV;
-    ImageView SD_ImageView;
+    List<Item> itemList1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        setContentView(R.layout.show_lock_activity);
+        setContentView(R.layout.show_time_activity);
         Log.i("test", "Show_Lock_Activity");
 
         final ListView listview;
-
-        dialog = new Dialog(this);
-        dialog.setContentView(R.layout.show_detail);
-        dialog.setTitle("Custom Dialog");
-
-
-        SD_HeaderTV=(TextView)dialog.findViewById(R.id.SD_Header);
-        SD_ContentsTV=(TextView)dialog.findViewById(R.id.SD_contents);
-        SD_TimeTV=(TextView)dialog.findViewById(R.id.SD_Time);
-        SD_ImageView=(ImageView)dialog.findViewById(R.id.SD_imageView);
 
         // Adapter 생성
         adapter = new ListViewAdapter();
@@ -69,18 +55,6 @@ public class Show_Lock_Activity extends AppCompatActivity{
         // 리스트뷰 참조 및 Adapter달기
         listview = (ListView) findViewById(R.id.List_View);
         listview.setAdapter(adapter);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Item item=itemList1.get(i);
-
-
-                CD=new Create_Dialog();
-                CD.execute(item.Header,item.Contents_image,item.Contents_text,item.time);
-
-
-            }
-        });
         listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
 
@@ -90,6 +64,11 @@ public class Show_Lock_Activity extends AppCompatActivity{
 
                 Item item=itemList1.get(i);
                 final String Delete_Num=item.num;
+                //String a=(String)adapterView.getItemAtPosition(i);//null
+
+                //String a=(String)adapterView.getAdapter().getItem(i);//null
+
+                //String a=adapter.getItem(i).toString();//null
 
                 Log.i("test","a : "+Delete_Num);
 
@@ -114,7 +93,7 @@ public class Show_Lock_Activity extends AppCompatActivity{
         E_mail = setting.getString("ID", "");
 
         Searcher searcher = new Searcher();
-        searcher.Start_Searcher("http://seongjun0926.cafe24.com/MemoryLock/Search_Create_Detail.jsp?E_Mail="+E_mail+"&M_C_Type=1", new OnFinishSearchListener() {
+        searcher.Start_Searcher("http://seongjun0926.cafe24.com/MemoryLock/Search_Create_Detail.jsp?E_Mail=" + E_mail+"&M_C_Type=2", new OnFinishSearchListener() {
 
             @Override
             public void onSuccess(List<Item> itemList) {
@@ -131,19 +110,12 @@ public class Show_Lock_Activity extends AppCompatActivity{
 
     }
 
-
     /*여기있어야함*/
     private void showResult(List<Item> itemList) {
         itemList1=itemList;
         Log.i("test1", "showResult()");
         Log.i("test1", "itemList size: " + itemList.size());
 
-        //itemList.size() 가 0이라면
-        //없다 만들어라 추가해줘야함
-
-        if(itemList.size()==0){
-            Toast.makeText(getApplicationContext(),"볼 추억이 없습니다! 추억을 만들어주세요!",Toast.LENGTH_SHORT).show();
-        }
 
         for (int i = 0; i < itemList.size(); i++) {
             final Item item = itemList.get(i);
@@ -152,69 +124,78 @@ public class Show_Lock_Activity extends AppCompatActivity{
             final String Image = item.Contents_image;
             final String Context = item.Contents_text;
             final String Time = item.time;
+            final String Open_Time=item.Open_time;
+            final String Current_Time=item.Current_Time;
             final String Header=item.Header;
 
-
             creaeteDrawableFromUrl cdf = new creaeteDrawableFromUrl();
-            cdf.execute(Image,Context,Time,Header);
+            cdf.execute(Image,Context,Time,Open_Time,Current_Time,Header);
 
         }
 
     }
-    class Create_Dialog extends AsyncTask<String, Void, Drawable> {
 
-        String Header;
-        String url ;
-        String Contents;
-        String Time;
-        @Override
-        protected Drawable doInBackground(String... strings) {
-             Header=strings[0];
-             url = strings[1];
-             Contents=strings[2];
-             Time=strings[3];
-            try {
-                InputStream is = (InputStream) new URL(url).getContent();
-                Drawable d = Drawable.createFromStream(is, "src");
-                return d;
-            } catch (Exception e) {
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Drawable drawable) {
-            super.onPostExecute(drawable);
-            SD_HeaderTV.setText(Header);
-            SD_ImageView.setImageDrawable(drawable);
-            SD_ContentsTV.setText(Contents);
-            SD_TimeTV.setText(Time);
-
-
-
-            dialog.show();
-        }
-    }
 
     class creaeteDrawableFromUrl extends AsyncTask<String, Void, Drawable> {
         String text;
         String time;
+        String OpenTime;
+        String CurrentTime;
+        String url;
         String header;
-
         @Override
         protected Drawable doInBackground(String... strings) {
-            String url = strings[0];
-            text = strings[1];
-            time = strings[2];
-            header=strings[3];
+            OpenTime=strings[3];
+            CurrentTime=strings[4];
+
+            SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-M-dd");
+
             try {
-                InputStream is = (InputStream) new URL(url).getContent();
-                Drawable d = Drawable.createFromStream(is, "src");
+                Date OpenTime1=transFormat.parse(OpenTime);
+                Date CurrentTime2=transFormat.parse(CurrentTime);
 
-                return d;
-            } catch (Exception e) {
 
+
+                if(OpenTime1.after(CurrentTime2)){
+                    long term = OpenTime1.getTime()-CurrentTime2.getTime();
+
+                    term=term/1000/60/60/24;
+
+                    Log.i("test","term : "+term);
+
+                    text="뭐라고 적었을까?";
+                    header="";
+                    time="언제 만들었더라?";
+                    url = "http://seongjun0926.cafe24.com/MemoryLock/Upload/img/noimage.jpg";
+                    try {
+                        InputStream is = (InputStream) new URL(url).getContent();
+                        Drawable d = Drawable.createFromStream(is, "src");
+
+                        return d;
+                    } catch (Exception e) {
+
+                    }
+
+                }else{
+                    text = strings[1];
+                    time = strings[2];
+                    url = strings[0];
+                    header=strings[5];
+                    try {
+                        InputStream is = (InputStream) new URL(url).getContent();
+                        Drawable d = Drawable.createFromStream(is, "src");
+
+                        return d;
+                    } catch (Exception e) {
+
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
+
+
+
 
             return null;
         }
@@ -223,6 +204,7 @@ public class Show_Lock_Activity extends AppCompatActivity{
         @Override
         protected void onPostExecute(Drawable drawable) {
             adapter.addItem(drawable,header,text ,time);
+
             adapter.notifyDataSetChanged();
         }
     }
@@ -267,7 +249,7 @@ public class Show_Lock_Activity extends AppCompatActivity{
         protected void onPostExecute(String str) {
 
             Toast.makeText(getApplicationContext(),"삭제되었습니다.",Toast.LENGTH_SHORT).show();
-            Intent Show_Lock_Activity = new Intent(Show_Lock_Activity.this, Show_Lock_Activity.class);
+            Intent Show_Lock_Activity = new Intent(Show_Time_Activity.this, Show_Time_Activity.class);
             startActivity(Show_Lock_Activity);
             finish();
 

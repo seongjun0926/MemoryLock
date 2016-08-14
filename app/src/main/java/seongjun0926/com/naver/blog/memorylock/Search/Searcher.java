@@ -98,6 +98,9 @@ public class Searcher {
                     item.lng = object.getString("M_C_lng");
                     item.time = object.getString("M_C_Time");
                     item.type = object.getString("M_C_Type");
+                    item.Current_Time=object.getString("Current_Time");
+                    item.Open_time=object.getString("M_C_OpenTime");
+                    item.Header=object.getString("M_C_Header");
                     itemList.add(item);
 
                 }

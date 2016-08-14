@@ -9,10 +9,12 @@ public class ListViewItem {
     private Drawable Image;
     private String Context_str;
     private String Time_str;
-
-
+    private String Header_str;
     public void setImage(Drawable image){
         Image=image;
+    }
+    public void setHeader(String header_str){
+        Header_str=header_str;
     }
 
     public void setContext_str(String context_str) {
@@ -30,6 +32,6 @@ public class ListViewItem {
     public String getTime_str(){
         return this.Time_str;
     }
-
+    public String getHeader_str(){return  this.Header_str;}
 
 }

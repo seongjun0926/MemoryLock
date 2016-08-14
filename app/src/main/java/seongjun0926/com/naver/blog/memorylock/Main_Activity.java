@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,15 +34,13 @@ import seongjun0926.com.naver.blog.memorylock.Search.Item;
 import seongjun0926.com.naver.blog.memorylock.Search.OnFinishSearchListener;
 import seongjun0926.com.naver.blog.memorylock.Search.Searcher;
 
-public class Main_Activity extends FragmentActivity implements MapView.MapViewEventListener,MapView.POIItemEventListener,View.OnClickListener {
+public class Main_Activity extends FragmentActivity implements MapView.MapViewEventListener, MapView.POIItemEventListener, View.OnClickListener {
 
     String E_mail;
     Button Lock_Btn, TimeCapSule_Btn;
     private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
     SharedPreferences setting;
-    MapView mapView=null;
-
-
+    MapView mapView = null;
 
 
     @Override
@@ -56,7 +57,6 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
         TimeCapSule_Btn.setOnClickListener(this);
 
 
-
         //=========================================================================================================//
 
         //맵뷰
@@ -70,11 +70,9 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
         container.addView(mapView);
 
 
-
-
         Searcher searcher = new Searcher();
-        searcher.Start_Searcher("http://seongjun0926.cafe24.com/MemoryLock/Search_Create.jsp?E_Mail="+E_mail, new OnFinishSearchListener(){
-        //db에 저장되어있는 값들을 가져옴 겟방식으로 연결해서 지도에 커스텀 마커 띄워주기위함.
+        searcher.Start_Searcher("http://seongjun0926.cafe24.com/MemoryLock/Search_Create.jsp?E_Mail=" + E_mail, new OnFinishSearchListener() {
+            //db에 저장되어있는 값들을 가져옴 겟방식으로 연결해서 지도에 커스텀 마커 띄워주기위함.
             @Override
             public void onSuccess(List<Item> itemList) {
                 showResult(itemList); // 검색 결과 보여줌
@@ -83,24 +81,24 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
 
             @Override
             public void onFail() {
-                Toast.makeText(getApplicationContext(),"통신이 원활하지 않습니다.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "통신이 원활하지 않습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-     @Override
+    @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.Lock_Btn:
                 Intent LockPop_Activity = new Intent(Main_Activity.this, seongjun0926.com.naver.blog.memorylock.Lock.LockPop_Activity.class);
 
                 startActivity(LockPop_Activity);
-            break;
+                break;
             case R.id.TimeCapSule_Btn:
                 Intent TimeCapsulePop_Activity = new Intent(Main_Activity.this, seongjun0926.com.naver.blog.memorylock.TimeCapsule.TimeCapsulePop_Activity.class);
                 startActivity(TimeCapsulePop_Activity);
-            break;
+                break;
         }
     }
 
@@ -128,7 +126,42 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
         Item item = mTagItemMap.get(mapPOIItem.getTag());
         StringBuilder sb = new StringBuilder();
         sb.append(item.time);
-        Toast.makeText(this,sb.toString(),Toast.LENGTH_SHORT).show();
+
+        String Type = item.type;
+
+
+        if (Type.equals("2")) {
+            String OpenTime = item.Open_time;
+            String CurrentTime = item.Current_Time;
+
+            SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-M-dd");
+            try {
+                Date OpenTime1=transFormat.parse(OpenTime);
+                Date CurrentTime2=transFormat.parse(CurrentTime);
+
+                if(OpenTime1.after(CurrentTime2)){
+                    long term = OpenTime1.getTime()-CurrentTime2.getTime();
+
+                    term=term/1000/60/60/24;
+
+                    String sentence=" "+String.valueOf(term)+" 일 남았습니다.";
+
+                    Toast.makeText(this, sentence , Toast.LENGTH_SHORT).show();
+
+                }else{
+
+                    Toast.makeText(this, sb.toString(), Toast.LENGTH_SHORT).show();
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+
+            Toast.makeText(this, sb.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+
+
     }
 
     @Override
@@ -141,7 +174,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
 
 //메인과 같이 선언되어있어야 시작이 되는듯
         Searcher searcher = new Searcher();
-        searcher.Start_Searcher("http://seongjun0926.cafe24.com/MemoryLock/Search_Create.jsp", new OnFinishSearchListener(){
+        searcher.Start_Searcher("http://seongjun0926.cafe24.com/MemoryLock/Search_Create.jsp", new OnFinishSearchListener() {
             @Override
             public void onSuccess(final List<Item> itemList) {
                 showResult(itemList);
@@ -208,13 +241,49 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
             if (poiItem == null) return null;
             Item item = mTagItemMap.get(poiItem.getTag());
             if (item == null) return null;
+
+            String Type = item.type;
+
+            String Contents_header="";
+            String Contents_text="";
+            String Contents_url="";
+            if (Type.equals("2")) {
+                String OpenTime = item.Open_time;
+                String CurrentTime = item.Current_Time;
+
+                SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-M-dd");
+                try {
+                    Date Date1=transFormat.parse(OpenTime);
+                    Date Date2=transFormat.parse(CurrentTime);
+
+                    if(Date1.after(Date2)){
+                        Contents_header="과연";
+                        Contents_text="뭐라고 적었을까?";
+                        Contents_url="http://seongjun0926.cafe24.com/MemoryLock/Upload/img/noimage.jpg";
+
+                    }else{
+                        Contents_header=item.Header;
+                        Contents_text=item.Contents_text;
+                        Contents_url=item.Contents_image;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Contents_text=item.Contents_text;
+                Contents_header=item.Header;
+                Contents_url=item.Contents_image;
+            }
+
+
+
             ImageView imageViewBadge = (ImageView) mCalloutBalloon.findViewById(R.id.badge);
             TextView textViewTitle = (TextView) mCalloutBalloon.findViewById(R.id.title);
-            textViewTitle.setText(item.Contents_text);
+            textViewTitle.setText(Contents_header);
             TextView textViewDesc = (TextView) mCalloutBalloon.findViewById(R.id.desc);
-            textViewDesc.setText(item.time);
+            textViewDesc.setText(Contents_text);
 
-            imageViewBadge.setImageDrawable(createDrawableFromUrl(item.Contents_image));
+            imageViewBadge.setImageDrawable(createDrawableFromUrl(Contents_url));
             return mCalloutBalloon;
         }
 
@@ -223,13 +292,26 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
             return null;
         }
     }
+
     /*여기있어야함*/
     private void showResult(List<Item> itemList) {
-        Log.i("test","showResult()");
+        Log.i("test", "showResult()");
         MapPointBounds mapPointBounds = new MapPointBounds();
 
         for (int i = 0; i < itemList.size(); i++) {
             Item item = itemList.get(i);
+            int Marker;
+            String Type = item.type;
+            if (Type.equals("2")) {
+                Marker = R.drawable.time;
+
+            } else {
+                Marker = R.drawable.lock;
+
+            }
+
+
+
             MapPOIItem poiItem = new MapPOIItem();
             poiItem.setItemName(item.Contents_text);
             poiItem.setTag(i);
@@ -238,9 +320,9 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
             poiItem.setMapPoint(mapPoint);
             mapPointBounds.add(mapPoint);
             poiItem.setMarkerType(MapPOIItem.MarkerType.CustomImage);
-            poiItem.setCustomImageResourceId(R.drawable.custom_marker_red);
+            poiItem.setCustomImageResourceId(Marker);
             poiItem.setSelectedMarkerType(MapPOIItem.MarkerType.CustomImage);
-            poiItem.setCustomSelectedImageResourceId(R.drawable.custom_marker_red);
+            poiItem.setCustomSelectedImageResourceId(Marker);
             poiItem.setCustomImageAutoscale(false);
             poiItem.setCustomImageAnchor(0.5f, 1.0f);
 
@@ -270,7 +352,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
         }
     }
 
-    private Object fetch(String address) throws MalformedURLException,IOException {
+    private Object fetch(String address) throws MalformedURLException, IOException {
         URL url = new URL(address);
         Object content = url.getContent();
         return content;

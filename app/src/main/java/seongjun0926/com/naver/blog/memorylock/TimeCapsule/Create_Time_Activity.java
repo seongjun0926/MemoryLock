@@ -1,4 +1,4 @@
-package seongjun0926.com.naver.blog.memorylock.Lock;
+package seongjun0926.com.naver.blog.memorylock.TimeCapsule;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -43,14 +44,14 @@ import java.util.regex.Pattern;
 
 import seongjun0926.com.naver.blog.memorylock.R;
 
-public class Create_Lock_Activity extends FragmentActivity {
+public class Create_Time_Activity extends FragmentActivity {
     private static final int RESULT_LOAD_IMAGE = 1;
 
 
     boolean isGPSEnabled, isNetworkEnabled;
     double lng;
     double lat;
-    int M_C_Type=1;
+    int M_C_Type = 2;
     String Location, M_C_Creator, Search_Email, M_S_Persons, M_C_Text, M_C_Header;//위치 저장할 변수
     SharedPreferences setting;
     String urlString;
@@ -62,16 +63,17 @@ public class Create_Lock_Activity extends FragmentActivity {
     String absolutePath;
     ImageView imageToUpload;
 
-    ProgressDialog dialog ;
+    DatePicker DP;
+    String Input_Date;
 
-    DoFileUpload DFU;
     int Share_Email;
+    DoFileUpload DFU;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.create_lock_activity);
+        setContentView(R.layout.create_time_activity);
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads()
@@ -87,7 +89,6 @@ public class Create_Lock_Activity extends FragmentActivity {
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             }
         });
-
 
 
         setting = getSharedPreferences("setting", 0);
@@ -155,11 +156,22 @@ public class Create_Lock_Activity extends FragmentActivity {
         Search_Email_ET = (EditText) findViewById(R.id.Search_Email);
         Search_Email_Btn = (Button) findViewById(R.id.Share_Email_Btn);
 
-        M_C_Header_ET = (EditText) findViewById(R.id.M_C_Header_ET);
-
-
         M_C_Text_ET = (EditText) findViewById(R.id.M_C_Text_ET);
         Register_Btn = (Button) findViewById(R.id.Register_Btn);
+
+        M_C_Header_ET = (EditText) findViewById(R.id.M_C_Header_ET);
+
+        DP = (DatePicker) findViewById(R.id.datePicker);
+
+        DP.init(DP.getYear(), DP.getMonth(), DP.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+
+                Input_Date = String.valueOf(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+
+            }
+
+        });
 
         Search_Email_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,8 +184,8 @@ public class Create_Lock_Activity extends FragmentActivity {
                         FSE_task = new Finde_Share_Email();
                         FSE_task.execute("http://seongjun0926.cafe24.com/MemoryLock/Forget_Email.jsp?E_Mail=" + Search_Email);
 
-                    }else{
-                        Toast.makeText(getApplicationContext(),"이메일 양식을 확인해주세요.",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "이메일 양식을 확인해주세요.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "추억을 공유할 사용자를 입력해주세요,", Toast.LENGTH_SHORT).show();
@@ -185,9 +197,9 @@ public class Create_Lock_Activity extends FragmentActivity {
         Register_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Search_Email_ET.getText().toString().length()>=1 && Share_Email==0){
-                    Toast.makeText(getApplicationContext(),"공유 사용자란을 확인해주세요.",Toast.LENGTH_SHORT).show();
-                }else {
+                if (Search_Email_ET.getText().toString().length() >= 1 && Share_Email == 0) {
+                    Toast.makeText(getApplicationContext(), "공유 사용자란을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                } else {
 
                     M_C_Text = M_C_Text_ET.getText().toString();
                     M_C_Header = M_C_Header_ET.getText().toString();
@@ -195,29 +207,29 @@ public class Create_Lock_Activity extends FragmentActivity {
                     String M_C_Header_enco=null;
                     if (M_C_Header.length() != 0) {
                         if (M_C_Text_ET.length() != 0) {
-                            try {
+                            if (Input_Date != null) {
+                                Toast.makeText(getApplicationContext(),"사진 업로드 중입니다. 기다려주세요.",Toast.LENGTH_SHORT).show();
 
-                                M_C_Text_enco = java.net.URLEncoder.encode(new String(M_C_Text.getBytes("UTF-8")));
-                                M_C_Header_enco=java.net.URLEncoder.encode(new String(M_C_Header.getBytes("UTF-8")));
+                                try {
+                                    M_C_Text_enco = java.net.URLEncoder.encode(new String(M_C_Text.getBytes("UTF-8")));
+                                    M_C_Header_enco=java.net.URLEncoder.encode(new String(M_C_Header.getBytes("UTF-8")));
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                urlString = "http://seongjun0926.cafe24.com/MemoryLock/Register_Create.jsp?lat=" + lat + "&lng=" + lng + "&M_C_Creator=" + M_C_Creator + "&M_C_Header="+M_C_Header_enco+"&M_C_Text=" + M_C_Text_enco + "&M_C_Type=" + M_C_Type + "&M_S_Persons=" + M_S_Persons + "&M_C_OpenTime=" + Input_Date;
+                                Log.i("test", urlString);
+                                DFU=new DoFileUpload();
+                                DFU.execute(urlString, absolutePath);
 
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "타임캡슐 개봉 날짜를 선택해주세요.", Toast.LENGTH_SHORT).show();
                             }
-                            Toast.makeText(getApplicationContext(),"사진 업로드 중입니다. 기다려주세요.",Toast.LENGTH_SHORT).show();
-
-                            urlString = "http://seongjun0926.cafe24.com/MemoryLock/Register_Create.jsp?lat="+lat+"&lng="+lng+"&M_C_Creator="+M_C_Creator+"&M_C_Header="+M_C_Header_enco+"&M_C_Text="+M_C_Text_enco + "&M_C_Type=" + M_C_Type + "&M_S_Persons=" + M_S_Persons;
-                            Log.i("test", urlString);
-
-                            DFU=new DoFileUpload();
-                            DFU.execute(urlString, absolutePath);
-
-
-
                         } else {
                             Toast.makeText(getApplicationContext(), "내용을 입력해주세요", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(getApplicationContext(), "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
+
                     }
                 }
             }
@@ -291,7 +303,7 @@ public class Create_Lock_Activity extends FragmentActivity {
                     if (Check.equals("succed")) {
                         M_S_Persons = Search_Email;
                         Toast.makeText(getApplicationContext(), "공유 사용자가 추가되었습니다.", Toast.LENGTH_SHORT).show();
-                        Share_Email=1;
+                        Share_Email = 1;
                         Search_Email_Btn.setClickable(false);
 
                     } else {
@@ -338,57 +350,58 @@ public class Create_Lock_Activity extends FragmentActivity {
             }
 
 
-        }else{
-            Toast.makeText(getApplicationContext(),"사진을 선택해주세요!!",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "사진을 선택해주세요!!", Toast.LENGTH_SHORT).show();
         }
     }
 
- public class DoFileUpload extends AsyncTask<String,Void,Void>{
 
-     private ProgressDialog mDlg=new ProgressDialog(Create_Lock_Activity.this);
+    public class DoFileUpload extends AsyncTask<String,Void,Void>{
 
-     @Override
-     protected void onPreExecute() {
+        private ProgressDialog mDlg=new ProgressDialog(Create_Time_Activity.this);
 
-         //스타일 설정
-         mDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-         //프로그래스 다이얼로그 나올 때 메시지 설정.
-         mDlg.setMessage("내용을 저장하고있습니다.");
-         //세팅된 다이얼로그를 보여줌.
-         mDlg.show();
+        @Override
+        protected void onPreExecute() {
+
+            //스타일 설정
+            mDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            //프로그래스 다이얼로그 나올 때 메시지 설정.
+            mDlg.setMessage("내용을 저장하고있습니다.");
+            //세팅된 다이얼로그를 보여줌.
+            mDlg.show();
 
 
-         super.onPreExecute();
-     }
+            super.onPreExecute();
+        }
 
-     @Override
-     protected Void doInBackground(String... strings) {
-         String apiUrl=strings[0];
-         String absolutePath=strings[1];
+        @Override
+        protected Void doInBackground(String... strings) {
+            String apiUrl=strings[0];
+            String absolutePath=strings[1];
 
-         try {
-             for (int i = 0; i < 5; i++) {
-                 mDlg.setProgress(i * 30);
-                 Thread.sleep(500);
-             }
-             HttpFileUpload(apiUrl, "",absolutePath);
+            try {
+                for (int i = 0; i < 5; i++) {
+                    mDlg.setProgress(i * 30);
+                    Thread.sleep(500);
+                }
+                HttpFileUpload(apiUrl, "",absolutePath);
 
-         } catch (InterruptedException e) {
-             e.printStackTrace();
-         }
-         return null;
-     }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
 
-     @Override
-     protected void onPostExecute(Void aVoid) {
-         super.onPostExecute(aVoid);
-         mDlg.dismiss();
-         Toast.makeText(getApplicationContext(),"등록이 완료되었습니다.",Toast.LENGTH_SHORT).show();
-         Intent Main_Activity = new Intent(Create_Lock_Activity.this, seongjun0926.com.naver.blog.memorylock.Main_Activity.class);
-         startActivity(Main_Activity);
-         finish();
-     }
- }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mDlg.dismiss();
+            Toast.makeText(getApplicationContext(),"등록이 완료되었습니다.",Toast.LENGTH_SHORT).show();
+            Intent Main_Activity = new Intent(Create_Time_Activity.this, seongjun0926.com.naver.blog.memorylock.Main_Activity.class);
+            startActivity(Main_Activity);
+            finish();
+        }
+    }
     String lineEnd = "\r\n";
     String twoHyphens = "--";
     String boundary = "*****";
