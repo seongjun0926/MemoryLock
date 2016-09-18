@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import seongjun0926.com.naver.blog.memorylock.BLE.FindDeviceActivity;
 import seongjun0926.com.naver.blog.memorylock.Search.Item;
 import seongjun0926.com.naver.blog.memorylock.Search.OnFinishSearchListener;
 import seongjun0926.com.naver.blog.memorylock.Search.Searcher;
@@ -37,10 +38,15 @@ import seongjun0926.com.naver.blog.memorylock.Search.Searcher;
 public class Main_Activity extends FragmentActivity implements MapView.MapViewEventListener, MapView.POIItemEventListener, View.OnClickListener {
 
     String E_mail;
-    Button Lock_Btn, TimeCapSule_Btn;
+    Button Lock_Btn, TimeCapSule_Btn, Bluetooth_Btn;
     private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
     SharedPreferences setting;
     MapView mapView = null;
+
+    private static final int REQUEST_CONNECT_DEVICE = 1;
+    private static final int REQUEST_ENABLE_BT = 2;
+
+
 
 
     @Override
@@ -55,6 +61,10 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
         Lock_Btn.setOnClickListener(this);
         TimeCapSule_Btn = (Button) findViewById(R.id.TimeCapSule_Btn);
         TimeCapSule_Btn.setOnClickListener(this);
+
+        Bluetooth_Btn=(Button)findViewById(R.id.Bluetooth_Btn);
+        Bluetooth_Btn.setOnClickListener(this);
+
 
 
         //=========================================================================================================//
@@ -99,9 +109,13 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
                 Intent TimeCapsulePop_Activity = new Intent(Main_Activity.this, seongjun0926.com.naver.blog.memorylock.TimeCapsule.TimeCapsulePop_Activity.class);
                 startActivity(TimeCapsulePop_Activity);
                 break;
+            case R.id.Bluetooth_Btn:
+                Intent _i = null;
+                _i = new Intent(Main_Activity.this, FindDeviceActivity.class );
+                startActivity(_i);
+                break;
         }
     }
-
     //---------------------------------------------------------------------------------------------------------------------------------------//
     //이상한 함수들...
 

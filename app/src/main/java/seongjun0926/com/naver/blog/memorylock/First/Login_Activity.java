@@ -66,7 +66,7 @@ public class Login_Activity extends AppCompatActivity implements View.OnClickLis
         new TedPermission(this)
                 .setPermissionListener(permissionlistener)
                 .setDeniedMessage("해당 권한을 허용하지 않으면 앱 사용을 하지 못합니다.\n\n해당 권한을 허용해주세요. [설정] > [권한]")
-                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE ,Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN)
                 .check();
 
         Log.i("test", "로그인 실행");

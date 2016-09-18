@@ -32,5 +32,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:design:24.0.0'
     compile 'com.github.ParkSangGwon:TedPermission:v1.0.12'
+    compile 'org.altbeacon:android-beacon-library:2+'
     compile files('libs/libDaumMapAndroid.jar')
 }

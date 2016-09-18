@@ -37,9 +37,9 @@ public class Show_Lock_Activity extends AppCompatActivity{
     String E_mail;
     SharedPreferences setting;
     ListViewAdapter adapter;
-    Create_Dialog CD;
     List<Item> itemList1;
 
+    Create_Dialog CD;
     Dialog dialog;
     TextView SD_HeaderTV,SD_ContentsTV,SD_TimeTV;
     ImageView SD_ImageView;
@@ -72,6 +72,8 @@ public class Show_Lock_Activity extends AppCompatActivity{
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.i("test","i: "+i);
+
                 Item item=itemList1.get(i);
 
 
@@ -86,12 +88,11 @@ public class Show_Lock_Activity extends AppCompatActivity{
 
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.i("test","i: "+i);
 
 
                 Item item=itemList1.get(i);
                 final String Delete_Num=item.num;
-
-                Log.i("test","a : "+Delete_Num);
 
                 AlertDialog.Builder alert=new AlertDialog.Builder(view.getContext());
                 alert.setTitle("확인");
@@ -106,7 +107,7 @@ public class Show_Lock_Activity extends AppCompatActivity{
                 });
                 alert.show();
 
-                return false;
+                return true;
             }
         });
 
@@ -141,9 +142,6 @@ public class Show_Lock_Activity extends AppCompatActivity{
         //itemList.size() 가 0이라면
         //없다 만들어라 추가해줘야함
 
-        if(itemList.size()==0){
-            Toast.makeText(getApplicationContext(),"볼 추억이 없습니다! 추억을 만들어주세요!",Toast.LENGTH_SHORT).show();
-        }
 
         for (int i = 0; i < itemList.size(); i++) {
             final Item item = itemList.get(i);

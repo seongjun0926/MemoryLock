@@ -1,5 +1,6 @@
 package seongjun0926.com.naver.blog.memorylock.TimeCapsule;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -38,6 +41,11 @@ public class Show_Time_Activity extends AppCompatActivity{
     SharedPreferences setting;
     ListViewAdapter adapter;
 
+    Create_Dialog CD;
+    Dialog dialog;
+    TextView SD_HeaderTV,SD_ContentsTV,SD_TimeTV;
+    ImageView SD_ImageView;
+
     List<Item> itemList1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +57,58 @@ public class Show_Time_Activity extends AppCompatActivity{
 
         final ListView listview;
 
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.show_detail);
+        dialog.setTitle("Custom Dialog");
+
+
+        SD_HeaderTV=(TextView)dialog.findViewById(R.id.SD_Header);
+        SD_ContentsTV=(TextView)dialog.findViewById(R.id.SD_contents);
+        SD_TimeTV=(TextView)dialog.findViewById(R.id.SD_Time);
+        SD_ImageView=(ImageView)dialog.findViewById(R.id.SD_imageView);
+
         // Adapter 생성
         adapter = new ListViewAdapter();
 
         // 리스트뷰 참조 및 Adapter달기
         listview = (ListView) findViewById(R.id.List_View);
         listview.setAdapter(adapter);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Item item=itemList1.get(i);
+
+                String OpenT=item.Open_time;
+                String CurrentT=item.Current_Time;
+
+                SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-M-dd");
+
+                try{
+                    Date OpenTime1=transFormat.parse(OpenT);
+                    Date CurrentTime2=transFormat.parse(CurrentT);
+
+                    if(OpenTime1.after(CurrentTime2)) {
+                        long term = OpenTime1.getTime() - CurrentTime2.getTime();
+
+                        term = term / 1000 / 60 / 60 / 24;
+
+                        CD=new Create_Dialog();
+                        CD.execute(item.Header,"http://seongjun0926.cafe24.com/MemoryLock/Upload/img/noimage.jpg","뭐라고 적었을까?","언제 만들었더라?");
+                        Toast.makeText(getApplicationContext(),term+" 일 남았습니다.",Toast.LENGTH_SHORT).show();
+                    }else{
+                        CD=new Create_Dialog();
+                        CD.execute(item.Header,item.Contents_image,item.Contents_text,item.time);
+                    }
+
+                    }catch (ParseException e){
+                    e.printStackTrace();
+                }
+
+
+
+
+            }
+        });
         listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
 
@@ -85,7 +139,7 @@ public class Show_Time_Activity extends AppCompatActivity{
                 });
                 alert.show();
 
-                return false;
+                return true;
             }
         });
 
@@ -109,7 +163,40 @@ public class Show_Time_Activity extends AppCompatActivity{
 
 
     }
+    class Create_Dialog extends AsyncTask<String, Void, Drawable> {
 
+        String Header;
+        String url ;
+        String Contents;
+        String Time;
+        @Override
+        protected Drawable doInBackground(String... strings) {
+            Header=strings[0];
+            url = strings[1];
+            Contents=strings[2];
+            Time=strings[3];
+            try {
+                InputStream is = (InputStream) new URL(url).getContent();
+                Drawable d = Drawable.createFromStream(is, "src");
+                return d;
+            } catch (Exception e) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            super.onPostExecute(drawable);
+            SD_HeaderTV.setText(Header);
+            SD_ImageView.setImageDrawable(drawable);
+            SD_ContentsTV.setText(Contents);
+            SD_TimeTV.setText(Time);
+
+
+
+            dialog.show();
+        }
+    }
     /*여기있어야함*/
     private void showResult(List<Item> itemList) {
         itemList1=itemList;
@@ -164,7 +251,7 @@ public class Show_Time_Activity extends AppCompatActivity{
                     Log.i("test","term : "+term);
 
                     text="뭐라고 적었을까?";
-                    header="";
+                    header=strings[5];
                     time="언제 만들었더라?";
                     url = "http://seongjun0926.cafe24.com/MemoryLock/Upload/img/noimage.jpg";
                     try {
