@@ -38,6 +38,9 @@ public class LockPop_Activity extends FragmentActivity implements BeaconConsumer
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.lockpop_activity);
 
+        Intent intent=getIntent();
+        Beacon_Check=intent.getExtras().getBoolean("Beacon_Check");
+
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
 // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
@@ -56,7 +59,6 @@ public class LockPop_Activity extends FragmentActivity implements BeaconConsumer
                 if(Beacon_Check) {
                     Intent Create_Lock_Activity = new Intent(LockPop_Activity.this, Create_Lock_Activity.class);
                     startActivity(Create_Lock_Activity);
-                    Beacon_Check=false;
                     finish();
                 }else {
                     Toast.makeText(getApplicationContext(), "감지된 비콘이 없습니다!", Toast.LENGTH_SHORT).show();

@@ -26,14 +26,16 @@
             android:layout_height="match_parent"
             android:text="타임 캡슐 보기"
             android:id="@+id/Show_TimeCapsule_Btn"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:textSize="30dp" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="타임 캡슐 생성"
             android:id="@+id/Create_TimeCapsule_Btn"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:textSize="30dp" />
 
     </LinearLayout>
 </LinearLayout>

@@ -26,13 +26,15 @@
             android:layout_height="match_parent"
             android:text="자물쇠 보기"
             android:id="@+id/Show_Lock_Btn"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:textSize="30dp" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="자물쇠 생성"
             android:id="@+id/Create_Lock_Btn"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:textSize="30dp" />
     </LinearLayout>
 </LinearLayout>
