@@ -413,6 +413,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
             int Marker;
             String Type = item.type;
             if (Type.equals("2")) {
+                //
                 Marker = R.drawable.time;
 
             } else if(Type.equals("1")) {
