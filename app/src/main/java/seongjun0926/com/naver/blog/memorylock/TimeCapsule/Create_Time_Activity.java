@@ -362,7 +362,7 @@ public class Create_Time_Activity extends FragmentActivity {
 
         @Override
         protected void onPreExecute() {
-
+            super.onPreExecute();
             //스타일 설정
             mDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             //프로그래스 다이얼로그 나올 때 메시지 설정.
@@ -370,8 +370,6 @@ public class Create_Time_Activity extends FragmentActivity {
             //세팅된 다이얼로그를 보여줌.
             mDlg.show();
 
-
-            super.onPreExecute();
         }
 
         @Override
@@ -386,7 +384,7 @@ public class Create_Time_Activity extends FragmentActivity {
                 }
                 HttpFileUpload(apiUrl, "",absolutePath);
 
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -402,6 +400,7 @@ public class Create_Time_Activity extends FragmentActivity {
             finish();
         }
     }
+
     String lineEnd = "\r\n";
     String twoHyphens = "--";
     String boundary = "*****";

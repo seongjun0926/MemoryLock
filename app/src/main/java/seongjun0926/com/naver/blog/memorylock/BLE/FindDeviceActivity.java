@@ -212,9 +212,7 @@ public class FindDeviceActivity extends Activity {
 				}
 
 				Toast.makeText(FindDeviceActivity.this, "연결되었습니다.", Toast.LENGTH_SHORT).show();
-                Intent _i = null;
-                _i = new Intent(FindDeviceActivity.this, On_Off_Activity.class );
-                startActivity(_i);
+				setResult(RESULT_OK);
                 finish();
 				break;
 		}

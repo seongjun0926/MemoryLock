@@ -44,7 +44,7 @@ public class Show_Time_Activity extends AppCompatActivity{
     Create_Dialog CD;
     Dialog dialog;
     TextView SD_HeaderTV,SD_ContentsTV,SD_TimeTV;
-    ImageView SD_ImageView;
+    ImageView SD_ImageView,Share_Btn;
 
     List<Item> itemList1;
     @Override
@@ -66,6 +66,7 @@ public class Show_Time_Activity extends AppCompatActivity{
         SD_ContentsTV=(TextView)dialog.findViewById(R.id.SD_contents);
         SD_TimeTV=(TextView)dialog.findViewById(R.id.SD_Time);
         SD_ImageView=(ImageView)dialog.findViewById(R.id.SD_imageView);
+        Share_Btn=(ImageView)dialog.findViewById(R.id.share_Btn);
 
         // Adapter 생성
         adapter = new ListViewAdapter();
@@ -191,6 +192,17 @@ public class Show_Time_Activity extends AppCompatActivity{
             SD_ImageView.setImageDrawable(drawable);
             SD_ContentsTV.setText(Contents);
             SD_TimeTV.setText(Time);
+            Share_Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent msg = new Intent(Intent.ACTION_SEND);
+                    msg.addCategory(Intent.CATEGORY_DEFAULT);
+                    msg.putExtra(Intent.EXTRA_SUBJECT, "Memory_Lock");
+                    msg.putExtra(Intent.EXTRA_TEXT, "새로운 추억이 생성되었습니다. 앱으로 확인해주세요!");
+                    msg.setType("text/plain");
+                    startActivity(Intent.createChooser(msg, "공유"));
+                }
+            });
 
 
 

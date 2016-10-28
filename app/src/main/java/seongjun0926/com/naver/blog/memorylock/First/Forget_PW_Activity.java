@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -303,7 +304,8 @@ public class Forget_PW_Activity extends AppCompatActivity {
 
                         Input_Change_PW_ET = new EditText(Forget_PW_Activity.this);//동적으로 텍스트 뷰 생성
                         Input_Change_PW_ET.setHint("변경할 암호를 적어주세요.");
-                        Input_Change_PW_ET.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                        Input_Change_PW_ET.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        Input_Change_PW_ET.setTransformationMethod(PasswordTransformationMethod.getInstance());
                         Input_Change_PW_ET.setEms(10);
 
                         LinearLayout.LayoutParams Lp3 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);

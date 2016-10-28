@@ -52,9 +52,11 @@ public class BleService extends Service implements BluetoothAdapter.LeScanCallba
 	private static final String DEVICE_NAME = "RFDuino";
 	private static final UUID UUID_BLE_GENERIC_ACCESS_PROFILE_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb");
 	private static final UUID UUID_BLE_GENERIC_ATTRIBUTE_PROFILE_UUID = UUID.fromString("00001801-0000-1000-8000-00805f9b34fb");
-	private static final UUID UUID_BLUEINNO_PROFILE_SERVICE_UUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
+	private static final UUID UUID_BLUEINNO_PROFILE_SERVICE_UUID = UUID.fromString("00002220-0000-1000-8000-00805f9b34fb");
+			//UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb"); 아두이노용 UUID
 			//UUID.fromString("00002220-0000-1000-8000-00805f9b34fb"); 블루이노용 UUID
-	private static final UUID UUID_BLUEINNO_PROFILE_SEND_UUID =UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+	private static final UUID UUID_BLUEINNO_PROFILE_SEND_UUID =UUID.fromString("00002222-0000-1000-8000-00805f9b34fb");
+					//UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");아두이노용 UUID
 					//UUID.fromString("00002222-0000-1000-8000-00805f9b34fb"); 블루이노용 UUID
 	private static final UUID UUID_BLUEINNO_PROFILE_RECEIVE_UUIDD = UUID.fromString("00002221-0000-1000-8000-00805f9b34fb");
 	private static final UUID UUID_BLUEINNO_DISCONNECT_UUID = UUID.fromString("00002223-0000-1000-8000-00805f9b34fb");

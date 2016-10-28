@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import seongjun0926.com.naver.blog.memorylock.BLE.FindDeviceActivity;
+import seongjun0926.com.naver.blog.memorylock.BLE.On_Off_Activity;
 import seongjun0926.com.naver.blog.memorylock.Search.Item;
 import seongjun0926.com.naver.blog.memorylock.Search.OnFinishSearchListener;
 import seongjun0926.com.naver.blog.memorylock.Search.Searcher;
@@ -61,6 +62,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
     Boolean Beacon_Check=false;
     String Beacon_name="ML_BEACON";
 
+    Boolean BlueTooth_Conn=false;
 
 
     @Override
@@ -112,6 +114,8 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
             }
         });
 
+
+
     }
 
     @Override
@@ -134,10 +138,38 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
                 }
                 break;
             case R.id.Bluetooth_Btn:
-                Intent _i = null;
-                _i = new Intent(Main_Activity.this, FindDeviceActivity.class );
-                startActivity(_i);
+                Log.i("test","BlueTooth_Conn1 : "+BlueTooth_Conn);
+                if(BlueTooth_Conn) {
+                  Intent on_off_activity = new Intent(Main_Activity.this, On_Off_Activity.class);
+                    startActivity(on_off_activity);
+                }
+                else{
+                    Log.i("test","BlueTooth_Conn2 : "+BlueTooth_Conn);
+
+                    Intent _i = null;
+                    _i = new Intent(Main_Activity.this, FindDeviceActivity.class);
+                    startActivityForResult(_i,0);
+                }
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK) {
+            Log.i("test", "requestCode3 : " + requestCode);
+
+            Log.i("test", "BlueTooth_Conn4 : " + BlueTooth_Conn);
+
+            BlueTooth_Conn = true;
+        }else{
+                Log.i("test","requestCode5 : "+requestCode);
+
+                Log.i("test","BlueTooth_Conn6 : "+BlueTooth_Conn);
+
+                BlueTooth_Conn=false;
+
         }
     }
     //---------------------------------------------------------------------------------------------------------------------------------------//
@@ -383,9 +415,11 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
             if (Type.equals("2")) {
                 Marker = R.drawable.time;
 
-            } else {
+            } else if(Type.equals("1")) {
                 Marker = R.drawable.lock;
 
+            }else{
+                Marker = R.drawable.conn_btn1;
             }
 
 
