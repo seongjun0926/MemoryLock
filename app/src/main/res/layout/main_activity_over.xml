@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="seongjun0926.com.naver.blog.memorylock.Main_Activity">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="86dp"
+        android:layout_height="match_parent"
+        android:background="#90000000"
+        android:gravity="center_horizontal">
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"></LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_height="150dp"
+            android:layout_width="100dp">
+
+            <ImageButton
+                android:id="@+id/Lock_Btn"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/lock_btn" />
+
+            <TextView
+                android:text="자물쇠"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:id="@+id/textView1"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_height="150dp"
+            android:layout_width="100dp">
+
+            <ImageButton
+                android:id="@+id/Bluetooth_Btn"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/conn_btn" />
+
+            <TextView
+                android:text="자물쇠 연결"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:id="@+id/textView2"
+                android:textSize="18sp"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_height="150dp"
+            android:layout_width="100dp">
+
+
+            <ImageButton
+                android:id="@+id/TimeCapSule_Btn"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+
+                android:background="@drawable/time_btn" />
+
+            <TextView
+                android:text="타임 캡슐"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView3"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -27,7 +27,7 @@ public class On_Off_Activity extends FragmentActivity {
                 if(on_off_btn.isChecked()){
                     on_off_btn.setText("열기");
                     on_off_btn.setChecked(true);
-                    on_off_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.lock_on_btn));
+                    on_off_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.lock_off_btn));
                     on_off_btn.setClickable(true);
                     col = new byte[]{  0x01, (byte)(0)};
                     // col = 0;
@@ -35,7 +35,7 @@ public class On_Off_Activity extends FragmentActivity {
                 else{
                     on_off_btn.setText("잠그기");
                     on_off_btn.setChecked(false);
-                    on_off_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.lock_btn));
+                    on_off_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.lock_on_btn));
                     on_off_btn.setClickable(true);
                     col = new byte[]{  0x01, (byte)(180)};
                     // col = 0;

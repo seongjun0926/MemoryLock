@@ -1,5 +1,6 @@
 package seongjun0926.com.naver.blog.memorylock;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -7,9 +8,12 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +54,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
 
     String E_mail;
     ImageButton Lock_Btn, TimeCapSule_Btn, Bluetooth_Btn;
+    TextView Beacon_Check_TX;
     private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
     SharedPreferences setting;
     MapView mapView = null;
@@ -60,7 +65,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
     private BeaconManager beaconManager;
     private List<Beacon> beaconList = new ArrayList<>();
     Boolean Beacon_Check=false;
-    String Beacon_name="ML_BEACON";
+    String Beacon_name="HMSoft";
 
     Boolean BlueTooth_Conn=false;
 
@@ -68,11 +73,25 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        Window win =getWindow();
+        win.setContentView(R.layout.main_activity);
+
+        LayoutInflater inflater=(LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout linear = (LinearLayout)inflater.inflate(R.layout.main_activity_over,null);
+        LinearLayout.LayoutParams paramlinear = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
+                LinearLayout.LayoutParams.FILL_PARENT);
+        LinearLayout linear2 = (LinearLayout)inflater.inflate(R.layout.main_activity_footer,null);
+        LinearLayout.LayoutParams paramlinear2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
+                LinearLayout.LayoutParams.FILL_PARENT);
+        win.addContentView(linear,paramlinear);
+        win.addContentView(linear2,paramlinear2);
+
         //requestWindowFeature(Window.FEATURE_NO_TITLE); // 타이틀 없애기
         setting = getSharedPreferences("setting", 0);
         E_mail = setting.getString("ID", ""); //프리퍼런스에 저장된 값을 가져오기 위함
 
+        Beacon_Check_TX=(TextView)findViewById(R.id.Beacon_Check_TX);
+        Beacon_Check_TX.setText("주변에 비콘이 없어요!");
         Lock_Btn = (ImageButton) findViewById(R.id.Lock_Btn);
         Lock_Btn.setOnClickListener(this);
         TimeCapSule_Btn = (ImageButton) findViewById(R.id.TimeCapSule_Btn);
@@ -89,6 +108,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
         //=========================================================================================================//
 
         //맵뷰
+        MapView.setMapTilePersistentCacheEnabled(true);
         mapView = new MapView(this);
         mapView.setDaumMapApiKey(MapAPI.MAP_API_KEY_Value);
         mapView.setShowCurrentLocationMarker(true);//현재 위치 보여주는 마커 사용
@@ -240,7 +260,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
     }
 
     public void onMapViewInitialized(MapView mapView) {
-        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);//현재 위치 가지고 오기 위한 메솓,ㅊ
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);//현재 위치 가지고 오기 위한 메소드
 
 //메인과 같이 선언되어있어야 시작이 되는듯
         Searcher searcher = new Searcher();
@@ -312,14 +332,24 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
                        /* Log.i("test","? : "+Beacon_Add.equals(beacon.getBluetoothName()));
                         Log.i("test","?2 : "+beacon.getBluetoothAddress());
                         Log.i("test","?3 : "+beacon.getBluetoothName());*/
-                        Log.i("test","?3 : "+beacon.getRssi());
+                            Log.i("test","?3 : "+beacon.getRssi());
 
-                        Log.i("test", "BlutoothName : "+beacon.getBluetoothName());
+                            Log.i("test", "BlutoothName : "+beacon.getBluetoothName());
 
-                        if(Beacon_name.equals(beacon.getBluetoothName())&&beacon.getRssi()>-80){
+                            if(Beacon_name.equals(beacon.getBluetoothName())&&beacon.getRssi()>-80){
+                                 Beacon_Check=true;
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        runOnUiThread(new Runnable(){
+                                            @Override
+                                            public void run() {
+                                                Beacon_Check_TX.setText("주변에 비콘 감지!");
+                                            }
+                                        });
+                                    }
+                                }).start();
 
-                            Beacon_Check=true;
-                            Log.i("Test", "Beacon_Check : "+Beacon_Check);
                         }
                     }
                 }
@@ -414,13 +444,15 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
             String Type = item.type;
             if (Type.equals("2")) {
                 //
-                Marker = R.drawable.time;
+                Marker = R.drawable.time_marker;
 
             } else if(Type.equals("1")) {
-                Marker = R.drawable.lock;
+                Marker = R.drawable.lock_marker;
 
+            }else if(Type.equals("3")){
+                Marker = R.drawable.beacon_marker;
             }else{
-                Marker = R.drawable.conn_btn1;
+                Marker = R.drawable.current_location;
             }
 
 

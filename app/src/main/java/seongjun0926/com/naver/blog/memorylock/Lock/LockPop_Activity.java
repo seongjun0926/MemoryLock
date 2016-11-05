@@ -1,6 +1,8 @@
 package seongjun0926.com.naver.blog.memorylock.Lock;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
@@ -27,10 +29,12 @@ public class LockPop_Activity extends FragmentActivity implements BeaconConsumer
 
     Button Show_Lock_Btn, Create_Lock_Btn;
 
+    boolean isGPSEnabled, isNetworkEnabled;
+
     private BeaconManager beaconManager;
     private List<Beacon> beaconList = new ArrayList<>();
-    Boolean Beacon_Check=false;
-    String Beacon_Add="ML_BEACON";
+    Boolean Beacon_Check = false;
+    String Beacon_Add = "ML_BEACON";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +42,20 @@ public class LockPop_Activity extends FragmentActivity implements BeaconConsumer
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.lockpop_activity);
 
-        Intent intent=getIntent();
-        Beacon_Check=intent.getExtras().getBoolean("Beacon_Check");
+        Intent intent = getIntent();
+        Beacon_Check = intent.getExtras().getBoolean("Beacon_Check");
 
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
-// 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
+        // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
         beaconManager.bind(this);
 
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // GPS 프로바이더 사용가능여부
+        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        // 네트워크 프로바이더 사용가능여부
+        isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         Create_Lock_Btn = (Button) findViewById(R.id.Create_Lock_Btn);
         Show_Lock_Btn = (Button) findViewById(R.id.Show_Lock_Btn);
@@ -55,13 +65,17 @@ public class LockPop_Activity extends FragmentActivity implements BeaconConsumer
         Create_Lock_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(Beacon_Check) {
-                    Intent Create_Lock_Activity = new Intent(LockPop_Activity.this, Create_Lock_Activity.class);
-                    startActivity(Create_Lock_Activity);
-                    finish();
-                }else {
-                    Toast.makeText(getApplicationContext(), "감지된 비콘이 없습니다!", Toast.LENGTH_SHORT).show();
+                //isGPSEnaBled가 false면 위치정보가 안켜져있어서 생성안됌
+                if (isGPSEnabled == false || isNetworkEnabled == false) {
+                    Toast.makeText(getApplicationContext(), "위치정보를 켜주세요!", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (Beacon_Check) {
+                        Intent Create_Lock_Activity = new Intent(LockPop_Activity.this, Create_Lock_Activity.class);
+                        startActivity(Create_Lock_Activity);
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "감지된 비콘이 없습니다!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -78,11 +92,13 @@ public class LockPop_Activity extends FragmentActivity implements BeaconConsumer
 
 
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         beaconManager.unbind(this);
     }
+
     @Override
     public void onBeaconServiceConnect() {
         beaconManager.setRangeNotifier(new RangeNotifier() {
@@ -96,10 +112,10 @@ public class LockPop_Activity extends FragmentActivity implements BeaconConsumer
                        /* Log.i("test","? : "+Beacon_Add.equals(beacon.getBluetoothName()));
                         Log.i("test","?2 : "+beacon.getBluetoothAddress());
                         Log.i("test","?3 : "+beacon.getBluetoothName());*/
-                        Log.i("Test", "BlutoothName : "+beacon.getBluetoothName());
-                        if(Beacon_Add.equals(beacon.getBluetoothName())){
+                        Log.i("Test", "BlutoothName : " + beacon.getBluetoothName());
+                        if (Beacon_Add.equals(beacon.getBluetoothName())) {
                             beaconList.add(beacon);
-                            Beacon_Check=true;
+                            Beacon_Check = true;
                         }
                     }
                 }
