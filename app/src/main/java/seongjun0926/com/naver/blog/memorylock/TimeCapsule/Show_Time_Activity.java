@@ -94,11 +94,11 @@ public class Show_Time_Activity extends AppCompatActivity{
                         term = term / 1000 / 60 / 60 / 24;
 
                         CD=new Create_Dialog();
-                        CD.execute(item.Header,"http://seongjun0926.cafe24.com/MemoryLock/Upload/img/noimage.jpg","뭐라고 적었을까?","언제 만들었더라?");
+                        CD.execute(item.Header,"http://seongjun0926.cafe24.com/MemoryLock/Upload/img/noimage.jpg","뭐라고 적었을까?","언제 만들었더라?",item.num);
                         Toast.makeText(getApplicationContext(),term+" 일 남았습니다.",Toast.LENGTH_SHORT).show();
                     }else{
                         CD=new Create_Dialog();
-                        CD.execute(item.Header,item.Contents_image,item.Contents_text,item.time);
+                        CD.execute(item.Header,item.Contents_image,item.Contents_text,item.time,item.num);
                     }
 
                     }catch (ParseException e){
@@ -170,12 +170,15 @@ public class Show_Time_Activity extends AppCompatActivity{
         String url ;
         String Contents;
         String Time;
+        String num;
         @Override
         protected Drawable doInBackground(String... strings) {
             Header=strings[0];
             url = strings[1];
             Contents=strings[2];
             Time=strings[3];
+            num=strings[4];
+
             try {
                 InputStream is = (InputStream) new URL(url).getContent();
                 Drawable d = Drawable.createFromStream(is, "src");
@@ -197,9 +200,9 @@ public class Show_Time_Activity extends AppCompatActivity{
                 public void onClick(View v) {
                     Intent msg = new Intent(Intent.ACTION_SEND);
                     msg.addCategory(Intent.CATEGORY_DEFAULT);
-                    msg.putExtra(Intent.EXTRA_SUBJECT, "Memory_Lock");
-                    msg.putExtra(Intent.EXTRA_TEXT, "새로운 추억이 생성되었습니다. 앱으로 확인해주세요!");
                     msg.setType("text/plain");
+                    msg.putExtra(Intent.EXTRA_SUBJECT, "추억이 공유되었습니다.");
+                    msg.putExtra(Intent.EXTRA_TEXT, "http://cometocu.com/MemoryLock/Web/Search_MTime.jsp?M_C_Num="+num);
                     startActivity(Intent.createChooser(msg, "공유"));
                 }
             });
