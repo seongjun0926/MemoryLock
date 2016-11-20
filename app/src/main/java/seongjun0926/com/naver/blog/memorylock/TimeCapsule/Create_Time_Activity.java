@@ -25,6 +25,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -66,9 +68,10 @@ public class Create_Time_Activity extends FragmentActivity {
     DatePicker DP;
     String Input_Date;
 
-    int Share_Email;
+    int Share_Email, Open_Check=0;
     DoFileUpload DFU;
 
+    RadioButton.OnClickListener optionOnClickListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +93,23 @@ public class Create_Time_Activity extends FragmentActivity {
             }
         });
 
+        RadioGroup RG=(RadioGroup)findViewById(R.id.RadioGroup);
+        RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId==R.id.Open_Radio1){
+                    Open_Check = 1;
+                    Toast.makeText(getApplicationContext(),"공개를 선택했습니다.",Toast.LENGTH_SHORT).show();
+                }else if(checkedId==R.id.Open_Radio2){
+                    Open_Check = 2;
+                    Toast.makeText(getApplicationContext(),"비공개를 선택했습니다.",Toast.LENGTH_SHORT).show();
+                }else{
+                    Open_Check = 0;
+                }
+            }
+        });
+
 
         setting = getSharedPreferences("setting", 0);
         M_C_Creator = setting.getString("ID", "");
@@ -107,8 +127,8 @@ public class Create_Time_Activity extends FragmentActivity {
 
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-                double lat = location.getLatitude();
-                double lng = location.getLongitude();
+                lat = location.getLatitude();
+                lng = location.getLongitude();
 
                 Log.i("test", "1_latitude: " + lat + ", 1_longitude: " + lng);
                 Location = String.format("%s---%s", lat, lng);
@@ -197,42 +217,50 @@ public class Create_Time_Activity extends FragmentActivity {
         Register_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Search_Email_ET.getText().toString().length() >= 1 && Share_Email == 0) {
-                    Toast.makeText(getApplicationContext(), "공유 사용자란을 확인해주세요.", Toast.LENGTH_SHORT).show();
-                } else {
+                if (Open_Check != 0) {
 
-                    M_C_Text = M_C_Text_ET.getText().toString();
-                    M_C_Header = M_C_Header_ET.getText().toString();
-                    String M_C_Text_enco = null;
-                    String M_C_Header_enco=null;
-                    if (M_C_Header.length() != 0) {
-                        if (M_C_Text_ET.length() != 0) {
-                            if (Input_Date != null) {
-                                Toast.makeText(getApplicationContext(),"사진 업로드 중입니다. 기다려주세요.",Toast.LENGTH_SHORT).show();
+                    if (Search_Email_ET.getText().toString().length() >= 1 && Share_Email == 0) {
+                        Toast.makeText(getApplicationContext(), "공유 사용자란을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                    } else {
 
-                                try {
-                                    M_C_Text_enco = java.net.URLEncoder.encode(new String(M_C_Text.getBytes("UTF-8")));
-                                    M_C_Header_enco=java.net.URLEncoder.encode(new String(M_C_Header.getBytes("UTF-8")));
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
+                        M_C_Text = M_C_Text_ET.getText().toString();
+                        M_C_Header = M_C_Header_ET.getText().toString();
+                        String M_C_Text_enco = null;
+                        String M_C_Header_enco = null;
+
+                        if (M_C_Header.length() != 0) {
+                            if (M_C_Text_ET.length() != 0) {
+                                if (Input_Date != null) {
+                                    Toast.makeText(getApplicationContext(), "사진 업로드 중입니다. 기다려주세요.", Toast.LENGTH_SHORT).show();
+
+                                    try {
+                                        M_C_Text_enco = java.net.URLEncoder.encode(new String(M_C_Text.getBytes("UTF-8")));
+                                        M_C_Header_enco = java.net.URLEncoder.encode(new String(M_C_Header.getBytes("UTF-8")));
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+                                    urlString = "http://seongjun0926.cafe24.com/MemoryLock/Register_Create.jsp?lat=" + lat + "&lng=" + lng + "&M_C_Creator=" + M_C_Creator + "&M_C_Header=" + M_C_Header_enco + "&M_C_Text=" + M_C_Text_enco + "&M_C_Type=" + M_C_Type + "&M_S_Persons=" + M_S_Persons + "&M_C_OpenTime=" + Input_Date+"&M_C_Open="+Open_Check;
+                                    Log.i("test", urlString);
+                                    DFU = new DoFileUpload();
+                                    DFU.execute(urlString, absolutePath);
+
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "타임캡슐 개봉 날짜를 선택해주세요.", Toast.LENGTH_SHORT).show();
                                 }
-                                urlString = "http://seongjun0926.cafe24.com/MemoryLock/Register_Create.jsp?lat=" + lat + "&lng=" + lng + "&M_C_Creator=" + M_C_Creator + "&M_C_Header="+M_C_Header_enco+"&M_C_Text=" + M_C_Text_enco + "&M_C_Type=" + M_C_Type + "&M_S_Persons=" + M_S_Persons + "&M_C_OpenTime=" + Input_Date;
-                                Log.i("test", urlString);
-                                DFU=new DoFileUpload();
-                                DFU.execute(urlString, absolutePath);
-
                             } else {
-                                Toast.makeText(getApplicationContext(), "타임캡슐 개봉 날짜를 선택해주세요.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "내용을 입력해주세요", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(), "내용을 입력해주세요", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
 
+                        }
                     }
+                } else{
+                    Toast.makeText(getApplicationContext(), "공개 / 비공개를 선택해주세요", Toast.LENGTH_SHORT).show();
                 }
             }
+
+
         });
 
     }
@@ -356,9 +384,9 @@ public class Create_Time_Activity extends FragmentActivity {
     }
 
 
-    public class DoFileUpload extends AsyncTask<String,Void,Void>{
+    public class DoFileUpload extends AsyncTask<String, Void, Void> {
 
-        private ProgressDialog mDlg=new ProgressDialog(Create_Time_Activity.this);
+        private ProgressDialog mDlg = new ProgressDialog(Create_Time_Activity.this);
 
         @Override
         protected void onPreExecute() {
@@ -374,15 +402,15 @@ public class Create_Time_Activity extends FragmentActivity {
 
         @Override
         protected Void doInBackground(String... strings) {
-            String apiUrl=strings[0];
-            String absolutePath=strings[1];
+            String apiUrl = strings[0];
+            String absolutePath = strings[1];
 
             try {
                 for (int i = 0; i < 5; i++) {
                     mDlg.setProgress(i * 30);
                     Thread.sleep(500);
                 }
-                HttpFileUpload(apiUrl, "",absolutePath);
+                HttpFileUpload(apiUrl, "", absolutePath);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -394,7 +422,7 @@ public class Create_Time_Activity extends FragmentActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             mDlg.dismiss();
-            Toast.makeText(getApplicationContext(),"등록이 완료되었습니다.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "등록이 완료되었습니다.", Toast.LENGTH_SHORT).show();
             Intent Main_Activity = new Intent(Create_Time_Activity.this, seongjun0926.com.naver.blog.memorylock.Main_Activity.class);
             startActivity(Main_Activity);
             finish();
@@ -404,6 +432,7 @@ public class Create_Time_Activity extends FragmentActivity {
     String lineEnd = "\r\n";
     String twoHyphens = "--";
     String boundary = "*****";
+
     public void HttpFileUpload(String urlString, String params, String fileName) {
 
         try {
@@ -414,7 +443,7 @@ public class Create_Time_Activity extends FragmentActivity {
 
 
             // open connection
-            HttpURLConnection conn = (HttpURLConnection)connectUrl.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
             conn.setDoInput(true);
             conn.setDoOutput(true);
             conn.setUseCaches(false);
@@ -427,7 +456,7 @@ public class Create_Time_Activity extends FragmentActivity {
 
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + fileName+"\"" + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + fileName + "\"" + lineEnd);
             dos.writeBytes(lineEnd);
 
             int bytesAvailable = mFileInputStream.available();
@@ -456,18 +485,18 @@ public class Create_Time_Activity extends FragmentActivity {
             // get response
             int ch;
             InputStream is = conn.getInputStream();
-            StringBuffer b =new StringBuffer();
-            while( ( ch = is.read() ) != -1 ){
-                b.append( (char)ch );
+            StringBuffer b = new StringBuffer();
+            while ((ch = is.read()) != -1) {
+                b.append((char) ch);
             }
-            String s=b.toString();
+            String s = b.toString();
             dos.close();
 
 
         } catch (Exception e) {
 
 
-            Toast.makeText(getApplicationContext(),"사진을 선택해주세요!!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "사진을 선택해주세요!!", Toast.LENGTH_SHORT).show();
             Log.i("test", "exception " + e.getMessage());
             // TODO: handle exception
         }
