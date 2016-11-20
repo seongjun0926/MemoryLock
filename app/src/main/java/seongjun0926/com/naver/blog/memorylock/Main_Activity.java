@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,23 +56,22 @@ import seongjun0926.com.naver.blog.memorylock.Search.Searcher;
 public class Main_Activity extends FragmentActivity implements MapView.MapViewEventListener, MapView.POIItemEventListener, View.OnClickListener, BeaconConsumer {
 
     String E_mail;
+    ImageView web_btn;
     ImageButton Lock_Btn, TimeCapSule_Btn, Bluetooth_Btn;
     TextView Beacon_Check_TX;
     private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
     SharedPreferences setting;
     MapView mapView = null;
 
-    private static final int REQUEST_CONNECT_DEVICE = 1;
-    private static final int REQUEST_ENABLE_BT = 2;
-
     private BeaconManager beaconManager;
     private List<Beacon> beaconList = new ArrayList<>();
     Boolean Beacon_Check=false;
-    String Beacon_name="HMSoft";
-
+    String Beacon_name="ML_BEACON";
+    Boolean Beacon_Alter=false;
     Boolean BlueTooth_Conn=false;
-
-
+    SoundPool sound;
+    Vibrator vibe;
+    int soundId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +92,12 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
         setting = getSharedPreferences("setting", 0);
         E_mail = setting.getString("ID", ""); //프리퍼런스에 저장된 값을 가져오기 위함
 
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);//진동
+        sound = new SoundPool(1, AudioManager.STREAM_ALARM, 0);// maxStreams, streamType, srcQuality 소리
+        soundId = sound.load(this, R.raw.pop,1);
+
+       ;
+
         Beacon_Check_TX=(TextView)findViewById(R.id.Beacon_Check_TX);
         Beacon_Check_TX.setText("주변에 비콘이 없어요!");
         Lock_Btn = (ImageButton) findViewById(R.id.Lock_Btn);
@@ -99,6 +107,9 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
 
         Bluetooth_Btn=(ImageButton)findViewById(R.id.Bluetooth_Btn);
         Bluetooth_Btn.setOnClickListener(this);
+
+        web_btn=(ImageView)findViewById(R.id.titlebar);
+        web_btn.setOnClickListener(this);
 
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
@@ -135,27 +146,27 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
         });
 
 
-
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.titlebar:
+                Intent WebView_Activity=new Intent(Main_Activity.this,WebView_Activity.class);
+                startActivity(WebView_Activity);
+                break;
             case R.id.Lock_Btn:
                 Intent LockPop_Activity = new Intent(Main_Activity.this, seongjun0926.com.naver.blog.memorylock.Lock.LockPop_Activity.class);
                 LockPop_Activity.putExtra("Beacon_Check",Beacon_Check);
                 startActivity(LockPop_Activity);
                 break;
             case R.id.TimeCapSule_Btn:
-                if(Beacon_Check) {
-                    Log.i("Test", "Beacon_Check : "+Beacon_Check);
-                    Intent TimeCapsulePop_Activity = new Intent(Main_Activity.this, seongjun0926.com.naver.blog.memorylock.TimeCapsule.TimeCapsulePop_Activity.class);
-                    startActivity(TimeCapsulePop_Activity);
 
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "감지된 비콘이 없습니다!", Toast.LENGTH_SHORT).show();
-                }
+                    Intent TimeCapsulePop_Activity = new Intent(Main_Activity.this, seongjun0926.com.naver.blog.memorylock.TimeCapsule.TimeCapsulePop_Activity.class);
+                TimeCapsulePop_Activity.putExtra("Beacon_Check",Beacon_Check);
+
+                startActivity(TimeCapsulePop_Activity);
+
                 break;
             case R.id.Bluetooth_Btn:
                 Log.i("test","BlueTooth_Conn1 : "+BlueTooth_Conn);
@@ -329,15 +340,15 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
                     beaconList.clear();
                     for (Beacon beacon : beacons) {
                         beaconList.add(beacon);
-                       /* Log.i("test","? : "+Beacon_Add.equals(beacon.getBluetoothName()));
-                        Log.i("test","?2 : "+beacon.getBluetoothAddress());
-                        Log.i("test","?3 : "+beacon.getBluetoothName());*/
-                            Log.i("test","?3 : "+beacon.getRssi());
 
-                            Log.i("test", "BlutoothName : "+beacon.getBluetoothName());
-
-                            if(Beacon_name.equals(beacon.getBluetoothName())&&beacon.getRssi()>-80){
+                            if(Beacon_name.equals(beacon.getBluetoothName())&&beacon.getRssi()>-90){
                                  Beacon_Check=true;
+                                if(Beacon_Alter==false){
+                                    Log.i("test","Beacon_Alter:"+Beacon_Alter);
+                                    vibe.vibrate(1500);
+                                    sound.play(soundId, 1.0F, 1.0F,  1,  0,  1.0F);
+                                    Beacon_Alter=true;
+                                }
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -350,9 +361,28 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
                                     }
                                 }).start();
 
-                        }
+                        }else{
+                                Beacon_Check=false;
+                                Beacon_Alter=false;
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        runOnUiThread(new Runnable(){
+                                            @Override
+                                            public void run() {
+                                                Beacon_Check_TX.setText("주변에 비콘이 없어요!");
+                                            }
+                                        });
+                                    }
+                                }).start();
+
+                            }
+
+
                     }
+
                 }
+
             }
 
         });
@@ -436,6 +466,7 @@ public class Main_Activity extends FragmentActivity implements MapView.MapViewEv
     /*여기있어야함*/
     private void showResult(List<Item> itemList) {
         Log.i("test", "showResult()");
+
         MapPointBounds mapPointBounds = new MapPointBounds();
 
         for (int i = 0; i < itemList.size(); i++) {
