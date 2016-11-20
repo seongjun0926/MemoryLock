@@ -79,7 +79,7 @@ public class Show_Lock_Activity extends AppCompatActivity{
 
 
                 CD=new Create_Dialog();
-                CD.execute(item.Header,item.Contents_image,item.Contents_text,item.time);
+                CD.execute(item.Header,item.Contents_image,item.Contents_text,item.time,item.num);
 
 
             }
@@ -161,7 +161,7 @@ public class Show_Lock_Activity extends AppCompatActivity{
 
     }
     class Create_Dialog extends AsyncTask<String, Void, Drawable> {
-
+        String num;
         String Header;
         String url ;
         String Contents;
@@ -172,6 +172,7 @@ public class Show_Lock_Activity extends AppCompatActivity{
              url = strings[1];
              Contents=strings[2];
              Time=strings[3];
+             num=strings[4];
             try {
                 InputStream is = (InputStream) new URL(url).getContent();
                 Drawable d = Drawable.createFromStream(is, "src");
@@ -193,13 +194,12 @@ public class Show_Lock_Activity extends AppCompatActivity{
                 public void onClick(View v) {
                     Intent msg = new Intent(Intent.ACTION_SEND);
                     msg.addCategory(Intent.CATEGORY_DEFAULT);
-                    msg.putExtra(Intent.EXTRA_SUBJECT, "Memory_Lock");
-                    msg.putExtra(Intent.EXTRA_TEXT, "새로운 추억이 생성되었습니다. 앱으로 확인해주세요!");
                     msg.setType("text/plain");
+                    msg.putExtra(Intent.EXTRA_SUBJECT, "추억이 공유되었습니다.");
+                    msg.putExtra(Intent.EXTRA_TEXT, "http://cometocu.com/MemoryLock/Web/Search_MLock.jsp?M_C_Num="+num);
                     startActivity(Intent.createChooser(msg, "공유"));
                 }
             });
-
 
             dialog.show();
         }
